@@ -1,31 +1,22 @@
 import { Meteor } from 'meteor/meteor';
-import Links from '/imports/api/links';
+import { makeExecutableSchema } from 'graphql-tools';
+import { getSchema, load } from 'graphql-load';
+import { setup } from 'meteor/swydo:ddp-apollo';
+import {UserTypeDefs} from "../app/User/data/UserSchema";
+import {UserResolver} from "../app/User/data/UserResolvers";
 
-function insertLink(title, url) {
-  Links.insert({ title, url, createdAt: new Date() });
-}
+
+load({
+  typeDefs: [UserTypeDefs],
+  resolvers: [UserResolver],
+});
+
+const schema = makeExecutableSchema(getSchema());
+
+setup({
+  schema,
+});
 
 Meteor.startup(() => {
-  // If the Links collection is empty, add some data.
-  if (Links.find().count() === 0) {
-    insertLink(
-      'Do the Tutorial',
-      'https://www.meteor.com/tutorials/react/creating-an-app'
-    );
-
-    insertLink(
-      'Follow the Guide',
-      'http://guide.meteor.com'
-    );
-
-    insertLink(
-      'Read the Docs',
-      'https://docs.meteor.com'
-    );
-
-    insertLink(
-      'Discussions',
-      'https://forums.meteor.com'
-    );
-  }
+  // Todo
 });
