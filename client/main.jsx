@@ -9,6 +9,8 @@ import { BrowserRouter } from 'react-router-dom';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { blueGrey, green, red, pink } from '@material-ui/core/colors';
 import { App } from '/imports/ui/App'
+import { Provider } from 'react-redux';
+import { store } from '../imports/store';
 
 
 const theme = createMuiTheme({
@@ -49,7 +51,9 @@ Meteor.startup(() => {
       <BrowserRouter>
           <ApolloProvider client={client}>
               <MuiThemeProvider theme={theme}>
-                  <App />
+                  <Provider store={store} >
+                    <App/>
+                  </Provider>
               </MuiThemeProvider>
           </ApolloProvider>
       </BrowserRouter>,

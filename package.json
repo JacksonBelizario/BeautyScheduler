@@ -28,10 +28,12 @@
     "react-apollo": "^2.4.1",
     "react-dom": "^16.8.1",
     "react-material-ui-form-validator": "^2.0.7",
+    "react-redux": "^6.0.1",
     "react-router-dom": "^4.3.1",
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.7.1",
     "recompose": "^0.30.0",
+    "redux": "^4.0.1",
     "typeface-roboto": "0.0.54"
   },
   "meteor": {

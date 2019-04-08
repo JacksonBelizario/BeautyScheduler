@@ -4,6 +4,7 @@ import {withRouter} from 'react-router-dom';
 import {compose, withHandlers} from 'recompose';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {Login} from './Login';
+import {connect} from 'react-redux';
 
 const styles = theme => ({
     main: {
@@ -43,12 +44,20 @@ const styles = theme => ({
     },
 });
 
+const mapStateToProps = state => ({
+    showSnackBar: {
+        message: state.showSnackBar.message,
+        show: state.showSnackBar.show,
+    }
+});
+
 export const LoginContainer = compose(
     withRouter,
     withApollo,
     withStyles(styles),
+    connect(mapStateToProps),
     withHandlers({
-        onLogin: ({history}) => (email, password) => {
+        onLogin: ({history, dispatch}) => (email, password) => {
             Meteor.loginWithPassword(email, password, e => {
                 if (!e) {
                     history.replace();
@@ -59,18 +68,24 @@ export const LoginContainer = compose(
 
                 if (e.error === 403) {
                     if (e.reason.includes('password')) {
-                        // eslint-disable-next-line no-alert
-                        alert('Senha inválida.');
+                        dispatch({
+                            type: 'SNACKBAR',
+                            show: true,
+                            message: 'Senha inválida'
+                        });
                     } else if (e.reason.includes('User not found')) {
-                        // eslint-disable-next-line no-alert
-                        alert('Usuário não encontrado');
+                        dispatch({
+                            type: 'SNACKBAR',
+                            show: true,
+                            message: 'Usuário não encontrado'
+                        });
                     }
                 } else {
                     throw new Error(e.reason);
                 }
             });
         },
-        createAccount: ({history}) => (
+        createAccount: ({history, dispatch}) => (
             name,
             email,
             password
@@ -90,8 +105,11 @@ export const LoginContainer = compose(
                     }
 
                     if (e.error === 403) {
-                        // eslint-disable-next-line no-alert
-                        alert('Usuário já existe !');
+                        dispatch({
+                            type: 'SNACKBAR',
+                            show: true,
+                            message: 'Usuário já existe!'
+                        });
                     }
                 }
             );

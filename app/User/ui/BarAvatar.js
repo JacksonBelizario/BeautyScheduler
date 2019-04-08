@@ -5,7 +5,7 @@ import Fade from '@material-ui/core/Fade';
 import { Avatar } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import { userQuery } from '../data/UserQueries';
-import { RouterPaths } from '../../../imports/routes/Routes';
+import { RouterPaths } from '../../../imports/routes';
 
 const avatarImage = (size, email) =>
     `https://api.adorable.io/avatars/${size}/${email}.png`;

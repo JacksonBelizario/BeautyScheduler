@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import NavBar from './Navbar.jsx';
-import { Routes } from '../routes/Routes';
+import { Routes } from '../routes';
 
 const style = {
     container: {

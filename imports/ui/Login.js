@@ -1,45 +1,32 @@
-import React, {useReducer, useState} from 'react';
+import React, {useState} from 'react';
 import {Link} from 'react-router-dom';
-import {Switch, Typography, FormControlLabel, Snackbar, Slide, IconButton} from '@material-ui/core';
+import {FormControlLabel, IconButton, Slide, Snackbar, Switch, Typography} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import {RouterPaths} from '../routes/Routes';
 
 import Avatar from '@material-ui/core/Avatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import {LockOutlined, LockOpenOutlined, Close as CloseIcon} from '@material-ui/icons';
-import {ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
+import {Close as CloseIcon, LockOpenOutlined, LockOutlined} from '@material-ui/icons';
+import {TextValidator, ValidatorForm} from 'react-material-ui-form-validator';
 
-// import {
-//   fieldEmail,
-//   fieldPassword,
-//   reducer,
-// } from '../../../../infra/components/typeFields';
-//
-// const initialState = {
-//   fieldPassword,
-//   fieldEmail,
-// };
-
-export const Login = ({onLogin, createAccount, classes}) => {
-    // const [stateLogin, dispatch] = useReducer(reducer, initialState);
-    //
-    // const { value: password = '', ...propsPassword } = stateLogin.fieldPassword;
-    // const { value: email = '', ...propsEmail } = stateLogin.fieldEmail;
+export const Login = ({onLogin, createAccount, classes, showSnackBar, dispatch}) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLogin, setIsLogin] = useState(true);
     const [accept, setAccept] = useState(false);
-    const [showSnackBar, setShowSnackBar] = useState(false);
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (isLogin) {
-            onLogin(email, password)
+            onLogin(email, password);
         } else {
             if (!accept) {
-                return setShowSnackBar(true);
+                return dispatch({
+                    type: 'SNACKBAR',
+                    show: true,
+                    message: 'Você deve aceitar os Termos de Uso'
+                });
             }
-            createAccount(name, email, password)
+            createAccount(name, email, password);
         }
     };
 
@@ -128,18 +115,22 @@ export const Login = ({onLogin, createAccount, classes}) => {
                     </Button>
                 </ValidatorForm>
                 <Snackbar
-                    open={showSnackBar}
+                    open={showSnackBar.show}
                     TransitionComponent={(props) => <Slide {...props} direction="up"/>}
                     ContentProps={{
                         'aria-describedby': 'message-id',
                     }}
-                    message={<span id="message-id">Você deve aceitar os Termos de Uso</span>}
+                    message={<span id="message-id">{showSnackBar.message}</span>}
                     action={<IconButton
                         key="close"
                         aria-label="Close"
                         color="inherit"
                         onClick={() => {
-                            setShowSnackBar(false)
+                            dispatch({
+                                type: 'SNACKBAR',
+                                show: false,
+                                message: ''
+                            })
                         }}
                     >
                         <CloseIcon/>
