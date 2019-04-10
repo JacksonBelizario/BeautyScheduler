@@ -1,12 +1,11 @@
-import React, { Fragment } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import NavBar from './Navbar.jsx';
-import { Routes } from '../routes';
-import {ValidatorForm} from "react-material-ui-form-validator";
+import React, {Fragment} from 'react';
+import {withStyles} from '@material-ui/core/styles';
+import {Routes} from '../routes';
 import {IconButton, Slide, Snackbar} from "@material-ui/core";
 import {Close as CloseIcon} from "@material-ui/icons";
 import {connect} from 'react-redux';
 import {compose} from 'recompose';
+import {Navbar} from './components/Navbar';
 
 const style = {
     container: {
@@ -27,12 +26,12 @@ export const App = compose(
             show: state.showSnackBar.show,
         }
     }))
-)(({ classes, showSnackBar, dispatch }) => (
+)(({classes, showSnackBar, dispatch}) => (
     <Fragment>
-        <NavBar />
+        <Navbar/>
 
         <div className={classes.container}>
-            <Routes />
+            <Routes/>
         </div>
 
         <Snackbar
@@ -54,17 +53,18 @@ export const App = compose(
                     message: ''
                 })
             }}
-            action={<IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                onClick={() => {
-                    dispatch({
-                        type: 'SNACKBAR',
-                        show: false,
-                        message: ''
-                    })
-                }}
+            action={
+                <IconButton
+                    key="close"
+                    aria-label="Close"
+                    color="inherit"
+                    onClick={() => {
+                        dispatch({
+                            type: 'SNACKBAR',
+                            show: false,
+                            message: ''
+                        })
+                    }}
                 >
                     <CloseIcon/>
                 </IconButton>
