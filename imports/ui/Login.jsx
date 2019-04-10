@@ -1,5 +1,10 @@
 import React, {useState} from 'react';
-import {Link} from 'react-router-dom';
+import {Meteor} from 'meteor/meteor';
+import {withApollo} from 'react-apollo';
+import {Link, withRouter} from 'react-router-dom';
+import {compose, withHandlers} from 'recompose';
+import withStyles from '@material-ui/core/styles/withStyles';
+import {connect} from 'react-redux';
 import {FormControlLabel, IconButton, Slide, Snackbar, Switch, Typography} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 
@@ -8,7 +13,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import {Close as CloseIcon, LockOpenOutlined, LockOutlined} from '@material-ui/icons';
 import {TextValidator, ValidatorForm} from 'react-material-ui-form-validator';
 
-export const Login = ({onLogin, createAccount, classes, showSnackBar, dispatch}) => {
+const Login = ({onLogin, createAccount, classes, dispatch}) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -114,29 +119,116 @@ export const Login = ({onLogin, createAccount, classes, showSnackBar, dispatch})
                         }
                     </Button>
                 </ValidatorForm>
-                <Snackbar
-                    open={showSnackBar.show}
-                    TransitionComponent={(props) => <Slide {...props} direction="up"/>}
-                    ContentProps={{
-                        'aria-describedby': 'message-id',
-                    }}
-                    message={<span id="message-id">{showSnackBar.message}</span>}
-                    action={<IconButton
-                        key="close"
-                        aria-label="Close"
-                        color="inherit"
-                        onClick={() => {
-                            dispatch({
-                                type: 'SNACKBAR',
-                                show: false,
-                                message: ''
-                            })
-                        }}
-                    >
-                        <CloseIcon/>
-                    </IconButton>}
-                />
             </div>
         </main>
     );
 };
+
+const styles = theme => ({
+    main: {
+        width: 'auto',
+        display: 'block', // Fix IE 11 issue.
+        marginLeft: theme.spacing.unit * 3,
+        marginRight: theme.spacing.unit * 3,
+        [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
+            width: 400,
+            marginLeft: 'auto',
+            marginRight: 'auto',
+        },
+    },
+    flex: {
+        marginTop: theme.spacing.unit * 8,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
+    },
+    avatar: {
+        margin: theme.spacing.unit,
+        backgroundColor: theme.palette.secondary.main,
+    },
+    form: {
+        width: '100%', // Fix IE 11 issue.
+        marginTop: theme.spacing.unit,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    button: {
+        marginTop: theme.spacing.unit * 3,
+    },
+    lockIcon: {
+        marginRight: theme.spacing.unit,
+    },
+});
+
+export default compose(
+    withRouter,
+    withApollo,
+    withStyles(styles),
+    connect(state => ({
+        showSnackBar: {
+            message: state.showSnackBar.message,
+            show: state.showSnackBar.show,
+        }
+    })),
+    withHandlers({
+        onLogin: ({history, dispatch}) => (email, password) => {
+            Meteor.loginWithPassword(email, password, e => {
+                if (!e) {
+                    history.replace();
+                    //history.push(`/${RouterPaths.USER_PROFILE}`);
+                    history.push('/');
+                    return;
+                }
+
+                if (e.error === 403) {
+                    if (e.reason.includes('password')) {
+                        dispatch({
+                            type: 'SNACKBAR',
+                            show: true,
+                            message: 'Senha inválida'
+                        });
+                    } else if (e.reason.includes('User not found')) {
+                        dispatch({
+                            type: 'SNACKBAR',
+                            show: true,
+                            message: 'Usuário não encontrado'
+                        });
+                    }
+                } else {
+                    throw new Error(e.reason);
+                }
+            });
+        },
+        createAccount: ({history, dispatch}) => (
+            name,
+            email,
+            password
+        ) => {
+            Accounts.createUser(
+                {
+                    email,
+                    password,
+                    profile: {name},
+                },
+
+                e => {
+                    if (!e) {
+                        history.replace();
+                        history.push('/');
+                        return;
+                    }
+
+                    if (e.error === 403) {
+                        dispatch({
+                            type: 'SNACKBAR',
+                            show: true,
+                            message: 'Usuário já existe!'
+                        });
+                    }
+                }
+            );
+        },
+    })
+)(Login);

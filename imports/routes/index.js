@@ -2,7 +2,7 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import Hello from '../ui/Hello.jsx';
-import { LoginContainer } from '../ui/LoginContainer';
+import Login from '../ui/Login';
 
 export const RouterPaths = {
   ROOT: '/',
@@ -33,6 +33,6 @@ export const Routes = () => (
   <Switch>
       <PrivateRoute exact path={RouterPaths.ROOT} component={Hello} />
 
-      <Route path={`/${RouterPaths.LOGIN}`} component={LoginContainer} />
+      <Route path={`/${RouterPaths.LOGIN}`} component={Login} />
   </Switch>
 );
