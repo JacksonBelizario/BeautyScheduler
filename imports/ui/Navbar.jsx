@@ -1,6 +1,7 @@
 import React from 'react';
 // import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import { compose } from 'recompose';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -10,7 +11,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import { BarAvatar } from '../../app/User/ui/BarAvatar';
 import { RouterPaths } from '../routes';
 import { Link } from 'react-router-dom';
-
+import {withRouter} from 'react-router-dom';
 const styles = {
     root: {
         flexGrow: 1,
@@ -24,8 +25,7 @@ const styles = {
     },
 };
 
-function ButtonAppBar(props) {
-    const { classes } = props;
+function ButtonAppBar({ classes, location: { pathname } }) {
     return (
         <div className={classes.root}>
             <AppBar position="static">
@@ -38,7 +38,7 @@ function ButtonAppBar(props) {
                     </Typography>
                     {Meteor.userId() ? (
                         <BarAvatar />
-                    ) : (
+                    ) : pathname !== '/login' ? (
                         <Button
                             component={Link}
                             to={`/${RouterPaths.LOGIN}`}
@@ -47,17 +47,14 @@ function ButtonAppBar(props) {
                         >
                             Login
                         </Button>
-                    )}
+                    ) : ''}
                 </Toolbar>
             </AppBar>
         </div>
     );
 }
 
-// ButtonAppBar.propTypes = {
-//     classes: PropTypes.object.isRequired,
-// };
-
-const Navbar = withStyles(styles)(ButtonAppBar);
-
-export default Navbar;
+export default compose(
+    withRouter,
+    withStyles(styles)
+)(ButtonAppBar);
