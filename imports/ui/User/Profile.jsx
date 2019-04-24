@@ -4,12 +4,14 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import Popover from '@material-ui/core/Popover';
+import MenuItem from '@material-ui/core/MenuItem';
 import {Error as ErrorIcon, CheckCircle as CheckIcon} from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import { userQuery } from '../../api/Users.js';
@@ -39,6 +41,21 @@ const styles = theme => ({
     margin: theme.spacing.unit * 2,
   },
 });
+
+const genders = [
+  {
+    value: 'm',
+    label: 'Masculino',
+  },
+  {
+    value: 'f',
+    label: 'Feminino',
+  },
+  {
+    value: 'o',
+    label: 'Outro',
+  },
+];
 
 const Profile = ({ classes, userData: {user, loading} }) => {
 
@@ -169,17 +186,21 @@ const Profile = ({ classes, userData: {user, loading} }) => {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextValidator
-                    fullWidth
-                    label="Sexo"
-                    type="text"
-                    value={sexo}
-                    onChange={({target: {value}}) => {
-                      setSexo(value);
-                    }}
-                    validators={['required']}
-                    errorMessages={['Campo é obrigatório']}
-                />
+                <TextField
+                  fullWidth
+                  select
+                  label="Select"
+                  value={sexo}
+                  onChange={({target: {value}}) => {
+                    setSexo(value);
+                  }}
+                >
+                  {genders.map(option => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
             </Grid>
           </Paper>
@@ -187,11 +208,8 @@ const Profile = ({ classes, userData: {user, loading} }) => {
             <Typography variant="h5" component="h3">
               Endereço
             </Typography>
-            <Typography component="p">
-              Informe sua localização.
-            </Typography>
             <Grid container spacing={8}>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <TextValidator
                     fullWidth
                     label="CEP"
@@ -204,7 +222,7 @@ const Profile = ({ classes, userData: {user, loading} }) => {
                     errorMessages={['Campo é obrigatório']}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={8}>
                 <TextValidator
                     fullWidth
                     label="Endereço"
@@ -217,7 +235,7 @@ const Profile = ({ classes, userData: {user, loading} }) => {
                     errorMessages={['Campo é obrigatório']}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <TextValidator
                     fullWidth
                     label="Número"
@@ -230,21 +248,17 @@ const Profile = ({ classes, userData: {user, loading} }) => {
                     errorMessages={['Campo é obrigatório']}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
-                  <InputLabel htmlFor="complemento">Complemento</InputLabel>
-                  <Input
-                    disabled
-                    id="complemento"
-                    type='text'
-                    value={complemento}
+              <Grid item xs={12} sm={4}>
+                <TextField
+                    fullWidth
+                    label="Complemento"
                     onChange={({target: {value}}) => {
-                        setComplemento(value);
+                      setComplemento(value);
                     }}
-                  />
-                </FormControl>
+                    value={complemento}
+                />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <TextValidator
                     fullWidth
                     label="Bairro"
