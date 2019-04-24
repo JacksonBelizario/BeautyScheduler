@@ -1,11 +1,11 @@
-import {createStore} from 'redux';
+import { createStore } from 'redux';
 
 const initialState = {
     showSnackBar: {
         type: 'SNACKBAR',
         message: '',
-        show: false
-    }
+        show: false,
+    },
 };
 
 const reducer = (state = initialState, action) => {
@@ -16,7 +16,7 @@ const reducer = (state = initialState, action) => {
                 showSnackBar: {
                     message: action.message,
                     show: action.show,
-                }
+                },
             };
         default:
             return state;

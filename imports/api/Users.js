@@ -73,7 +73,7 @@ export const editUser = graphql(
     `,
     { name: 'editUser' }
   );
-  
+
   const USER_QUERY = gql`
     query User {
       user {
@@ -85,14 +85,14 @@ export const editUser = graphql(
       }
     }
   `;
-  
+
   export const userQuery = graphql(USER_QUERY, {
     name: 'userData',
     options: {
       fetchPolicy: 'cache-and-network',
     },
     props: data => {
-      console.log({data});
+      console.log({ data });
       return data;
     },
   });
