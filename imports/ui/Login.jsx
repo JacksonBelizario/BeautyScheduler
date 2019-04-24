@@ -5,12 +5,12 @@ import {Link, withRouter} from 'react-router-dom';
 import {compose, withHandlers} from 'recompose';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {connect} from 'react-redux';
-import {FormControlLabel, IconButton, Slide, Snackbar, Switch, Typography} from '@material-ui/core';
+import {FormControlLabel, Switch, Typography} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 
 import Avatar from '@material-ui/core/Avatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import {Close as CloseIcon, LockOpenOutlined, LockOutlined} from '@material-ui/icons';
+import {LockOpenOutlined, LockOutlined} from '@material-ui/icons';
 import {TextValidator, ValidatorForm} from 'react-material-ui-form-validator';
 
 const Login = ({onLogin, createAccount, classes, dispatch}) => {
