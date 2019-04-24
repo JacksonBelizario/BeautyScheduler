@@ -7,10 +7,10 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import {BarAvatar} from '../User/BarAvatar.jsx.js';
+import {BarAvatar} from '../User/BarAvatar.jsx';
 import {RouterPaths} from '../../routes';
 import {Link, withRouter} from 'react-router-dom';
-import {Sidebar} from "./Sidebar";
+import {Sidebar} from './Sidebar';
 
 const styles = {
     root: {

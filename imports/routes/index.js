@@ -3,7 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import Hello from '../ui/Hello.jsx';
 import Login from '../ui/Login.jsx';
-import UserProfile from '../ui/User/UserProfile.jsx';
+import UserProfile from '../ui/User/Profile.jsx';
 
 export const RouterPaths = {
   ROOT: '/',
