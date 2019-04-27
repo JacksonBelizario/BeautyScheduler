@@ -12,13 +12,16 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import Popover from '@material-ui/core/Popover';
 import MenuItem from '@material-ui/core/MenuItem';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
 import {Error as ErrorIcon, CheckCircle as CheckIcon} from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
-import { userQuery } from '../../api/Users.js';
+import { userQuery, editUser } from '../../api/Users.js';
 import {TextValidator, ValidatorForm} from 'react-material-ui-form-validator';
 import Loading from '../components/Loading'
 import red from '@material-ui/core/colors/red';
 import green from '@material-ui/core/colors/green';
+import axios from 'axios';
+import ZipCodeInput from './ZipCodeInput';
 
 const styles = theme => ({
   paper: {
@@ -57,38 +60,94 @@ const genders = [
   },
 ];
 
-const Profile = ({ classes, userData: {user, loading} }) => {
+
+const Profile = ({ classes, userData: {user, loading}, editUser }) => {
 
   if (loading) {
       return <Loading />;
   }
-  const {emails} = user;
+  const {profile, emails, address} = user;
   const [emailUser] = emails;
 
-  console.log({user, emailUser});
+  console.log({user, emailUser, editUser});
   
   const emailVerified = emailUser.verified !== "false";
   const [anchorEl, setAnchorEl] = useState(null);
   
-  const [name, setName] = useState('');
+  const [nome, setName] = useState(profile.name);
   const [email, setEmail] = useState(emailUser.address);
-  const [celular, setCelular] = useState('');
-  const [cpf, setCpf] = useState('');
-  const [dataNascimento, setDataNascimento] = useState('');
-  const [sexo, setSexo] = useState('');
+  const [celular, setCelular] = useState(profile.phoneNumber ||  '');
+  const [cpf, setCpf] = useState(profile.socialNumber ||  '');
+  const [dataNascimento, setDataNascimento] = useState(profile.birthday || '');
+  const [sexo, setSexo] = useState(profile.gender || '');
 
-  const [cep, setCep] = useState('');
-  const [endereco, setEndereco] = useState('');
-  const [numero, setNumero] = useState('');
-  const [complemento, setComplemento] = useState('');
-  const [bairro, setBairro] = useState('');
-  const [cidade, setCidade] = useState('');
-  const [estado, setEstado] = useState('');
+  const [cep, setCep] = useState(address.zipcode || '');
+  const [endereco, setEndereco] = useState(address.street || '');
+  const [numero, setNumero] = useState(address.number || '');
+  const [complemento, setComplemento] = useState(address.complement || '');
+  const [bairro, setBairro] = useState(address.neighborhood || '');
+  const [cidade, setCidade] = useState(address.city || '');
+  const [estado, setEstado] = useState(address.state || '');
 
 
   const handleSubmit = async () => {
-    console.log('handleSubmit');
+    try {
+      const { data } = await editUser({
+        variables: {
+          user: {
+            profile: {
+              name: nome,
+              phoneNumber: celular,
+              socialNumber: cpf,
+              birthday: dataNascimento,
+              gender: sexo
+            },
+            address: {
+              zipcode: cep,
+              street: endereco,
+              complement: complemento,
+              neighborhood: bairro,
+              number: numero,
+              city: cidade,
+              state: estado
+            }
+          },
+        },
+      });
+
+      if (data.editUser) {
+        // eslint-disable-next-line no-alert
+        alert('Informações Alteradas com sucesso!');
+      } else {
+        // eslint-disable-next-line no-alert
+        alert('Ops, não foi possivel salvar suas alterações!');
+      }
+    } catch (e) {
+      console.log('erro', e);
+    }
   };
+
+  
+
+export const consultarCEP = async cep => {
+  setCep(cep);
+	const cepNum = cep ? cep.match(/\d+/gi).join("") : "";
+	if (cepNum.length != 8) return;
+	try {
+    const {data} = await axios.get(`//viacep.com.br/ws/${cepNum}/json/`);
+    console.log({data})
+		if (!data.erro) {
+      setCep(data.cep);
+      setEndereco(data.logradouro);
+      setBairro(data.bairro);
+      setComplemento(data.complemento);
+      setCidade(data.localidade);
+      setEstado(data.uf);
+    }
+	} catch (err) {
+		console.log('err', err);
+	}
+};
 
   return (
     <div>
@@ -118,7 +177,7 @@ const Profile = ({ classes, userData: {user, loading} }) => {
                         setName(value);
                     }}
                     name="nome"
-                    value={name}
+                    value={nome}
                     validators={['required']}
                     errorMessages={['Campo é obrigatório']}
                 />
@@ -189,7 +248,7 @@ const Profile = ({ classes, userData: {user, loading} }) => {
                 <TextField
                   fullWidth
                   select
-                  label="Select"
+                  label="Sexo"
                   value={sexo}
                   onChange={({target: {value}}) => {
                     setSexo(value);
@@ -210,17 +269,18 @@ const Profile = ({ classes, userData: {user, loading} }) => {
             </Typography>
             <Grid container spacing={8}>
               <Grid item xs={12} sm={4}>
-                <TextValidator
-                    fullWidth
-                    label="CEP"
-                    onChange={({target: {value}}) => {
-                        setCep(value);
-                    }}
+                <FormControl fullWidth>
+                  <InputLabel htmlFor="cep">CEP</InputLabel>
+                  <Input
+                    id="cep"
                     name="cep"
                     value={cep}
-                    validators={['required']}
-                    errorMessages={['Campo é obrigatório']}
-                />
+                    onChange={({target: {value}}) => {
+                      consultarCEP(value);
+                    }}
+                    inputComponent={ZipCodeInput}
+                  />
+                </FormControl>
               </Grid>
               <Grid item xs={12} sm={8}>
                 <TextValidator
@@ -334,5 +394,6 @@ const Profile = ({ classes, userData: {user, loading} }) => {
 
 export default compose(
   userQuery,
+  editUser,
   withStyles(styles)
 )(Profile);

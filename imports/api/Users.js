@@ -24,24 +24,58 @@ type Mutation {
 }
 
 input UserInput {
-  email: String
+  profile: UserProfile
+  address: AddressInput
+}
+
+input UserProfile {
   name: String
+  phoneNumber: String
+  socialNumber: String
+  birthday: String
+  gender: String
 }
 
 type User {
   _id: ID
-  emails: [Email]
   profile: Profile
+  emails: [Email]
+  address: Address
 }
 
 type Profile {
-    name: String
+  name: String
+  phoneNumber: String
+  socialNumber: String
+  birthday: String
+  gender: String
 }
 
 type Email {
-    address: String
-    verified: String
+  address: String
+  verified: String
 }
+
+input AddressInput {
+  zipcode: String
+  street: String
+  complement: String
+  number: String
+  neighborhood: String
+  city: String
+  state: String
+}
+
+type Address {
+  zipcode: String
+  street: String
+  complement: String
+  number: String
+  neighborhood: String
+  city: String
+  state: String
+}
+
 `;
 
 export const UserResolver = {
@@ -78,9 +112,25 @@ export const editUser = graphql(
     query User {
       user {
         _id
+        profile {
+          name
+          phoneNumber
+          socialNumber
+          birthday
+          gender
+        }
         emails {
           address
           verified
+        }
+        address {
+          zipcode
+          street
+          complement
+          number
+          neighborhood
+          city
+          state
         }
       }
     }
