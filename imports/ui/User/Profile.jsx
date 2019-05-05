@@ -1,27 +1,23 @@
-import React, {useState} from 'react';
-import {compose} from 'recompose';
+import React, {useState, useEffect} from 'react';
+import {compose, withHandlers} from 'recompose';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import FormControl from '@material-ui/core/FormControl';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import Popover from '@material-ui/core/Popover';
 import MenuItem from '@material-ui/core/MenuItem';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
 import {Error as ErrorIcon, CheckCircle as CheckIcon} from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import { userQuery, editUser } from '../../api/Users.js';
-import {TextValidator, ValidatorForm} from 'react-material-ui-form-validator';
 import Loading from '../components/Loading'
 import red from '@material-ui/core/colors/red';
 import green from '@material-ui/core/colors/green';
-import axios from 'axios';
-import ZipCodeInput from './ZipCodeInput';
+import ZipCodeInput from './components/ZipCodeInput';
+import { validator } from '../../utils/validators';
+import { consultarCEP } from '../../utils/cep';
 
 const styles = theme => ({
   paper: {
@@ -60,93 +56,180 @@ const genders = [
   },
 ];
 
-
 const Profile = ({ classes, userData: {user, loading}, editUser }) => {
 
   if (loading) {
       return <Loading />;
   }
-  const {profile, emails, address} = user;
-  const [emailUser] = emails;
 
-  console.log({user, emailUser, editUser});
+  const {profile, emails, address} = user;
+
+  const [emailUser] = emails;
   
   const emailVerified = emailUser.verified !== "false";
+
   const [anchorEl, setAnchorEl] = useState(null);
   
-  const [nome, setName] = useState(profile.name);
   const [email, setEmail] = useState(emailUser.address);
-  const [celular, setCelular] = useState(profile.phoneNumber ||  '');
-  const [cpf, setCpf] = useState(profile.socialNumber ||  '');
-  const [dataNascimento, setDataNascimento] = useState(profile.birthday || '');
-  const [sexo, setSexo] = useState(profile.gender || '');
 
-  const [cep, setCep] = useState(address.zipcode || '');
-  const [endereco, setEndereco] = useState(address.street || '');
-  const [numero, setNumero] = useState(address.number || '');
-  const [complemento, setComplemento] = useState(address.complement || '');
-  const [bairro, setBairro] = useState(address.neighborhood || '');
-  const [cidade, setCidade] = useState(address.city || '');
-  const [estado, setEstado] = useState(address.state || '');
+  const [values, setValues] = useState({
+    nome: {
+      required: true,
+      label: 'nome',
+      value: profile.name
+    },
+    celular: {
+      label: 'Celular',
+      value: profile.phoneNumber ||  ''
+    },
+    dataNascimento: {
+      label: 'Data de nascimento',
+      value: profile.birthday ||  ''
+    },
+    sexo: {
+      label: 'Sexo',
+      value: profile.gender ||  ''
+    },
+    cpf: {
+      required: true,
+      label: 'CPF',
+      value: profile.socialNumber ||  ''
+    },
+    cep: {
+      required: true,
+      label: 'CEP',
+      value: profile.zipcode ||  ''
+    },
+    logradouro: {
+      label: 'Endereço',
+      value: address.street ||  ''
+    },
+    numero: {
+      label: 'Número',
+      value: address.number ||  ''
+    },
+    complemento: {
+      label: 'Complemento',
+      value: address.complement ||  ''
+    },
+    bairro: {
+      label: 'Bairro',
+      value: address.neighborhood ||  ''
+    },
+    localidade: {
+      label: 'Cidade',
+      value: address.city ||  ''
+    },
+    uf: {
+      label: 'Estado',
+      value: address.state ||  ''
+    },
+  });
+
+  const onFormChange = name => value => {
+
+    const error = validator(name, value, !!values[name].required);
+
+    setValues({
+      ...values,
+      [name]: {
+        ...values[name],
+        value,
+        error: Boolean(error),
+        helperText: error,
+      }
+    });
+  };
+
+  const updateAddress = addresses => {
+    setValues({
+      ...values,
+      ...Object.keys(addresses).reduce((carry, name) => {
+        carry[name] = {
+        ...values[name],
+        value: addresses[name],
+        error: null,
+        helperText: null,
+      }
+      return carry;
+      }, {})
+    });
+  }
+
+  const validateAll = () => {
+    const data = {
+      ...Object.keys(values).reduce((carry, name) => {
+        const {value} = values[name];
+        const error = validator(name, value, !!values[name].required);
+        carry[name] = {
+        ...values[name],
+        error: Boolean(error),
+        helperText: error,
+      }
+      return carry;
+      }, {})
+    };
+    setValues(data);
+    return !Object.keys(data).filter(name => data[name].error).length;
+  };
+
+  const formData = () => Object.keys(values).reduce((carry, name) => {
+    carry[name] = values[name].value;
+    return carry;
+  }, []);
 
 
   const handleSubmit = async () => {
-    try {
-      const { data } = await editUser({
-        variables: {
-          user: {
-            profile: {
-              name: nome,
-              phoneNumber: celular,
-              socialNumber: cpf,
-              birthday: dataNascimento,
-              gender: sexo
+    const validForm = validateAll();
+    if (validForm) {
+      const {
+        nome, celular, cpf, dataNascimento, sexo, cep, logradouro,
+        complemento, bairro, numero, localidade, uf
+      } = formData();
+      
+      try {
+        const { data } = await editUser({
+          variables: {
+            user: {
+              profile: {
+                name: nome,
+                phoneNumber: celular,
+                socialNumber: cpf,
+                birthday: dataNascimento,
+                gender: sexo
+              },
+              address: {
+                zipcode: cep,
+                street: logradouro,
+                complement: complemento,
+                neighborhood: bairro,
+                number: numero,
+                city: localidade,
+                state: uf
+              }
             },
-            address: {
-              zipcode: cep,
-              street: endereco,
-              complement: complemento,
-              neighborhood: bairro,
-              number: numero,
-              city: cidade,
-              state: estado
-            }
           },
-        },
-      });
-
-      if (data.editUser) {
-        // eslint-disable-next-line no-alert
-        alert('Informações Alteradas com sucesso!');
-      } else {
-        // eslint-disable-next-line no-alert
-        alert('Ops, não foi possivel salvar suas alterações!');
+        });
+  
+        if (data.editUser) {
+          // eslint-disable-next-line no-alert
+          alert('Informações Alteradas com sucesso!');
+        } else {
+          // eslint-disable-next-line no-alert
+          alert('Ops, não foi possivel salvar suas alterações!');
+        }
+      } catch (e) {
+        console.log('erro', e);
       }
-    } catch (e) {
-      console.log('erro', e);
+    } else {
+      alert('Corrija os campos em vermelho');
     }
   };
 
-  
-
-export const consultarCEP = async cep => {
-  setCep(cep);
-	const cepNum = cep ? cep.match(/\d+/gi).join("") : "";
-	if (cepNum.length != 8) return;
-	try {
-    const {data} = await axios.get(`//viacep.com.br/ws/${cepNum}/json/`);
-    console.log({data})
-		if (!data.erro) {
-      setCep(data.cep);
-      setEndereco(data.logradouro);
-      setBairro(data.bairro);
-      setComplemento(data.complemento);
-      setCidade(data.localidade);
-      setEstado(data.uf);
-    }
-	} catch (err) {
-		console.log('err', err);
-	}
+const handleZipCode = async cep => {
+  onFormChange('cep')(cep);
+  const data = await consultarCEP(cep);
+  data && updateAddress(data);
 };
 
   return (
@@ -158,9 +241,7 @@ export const consultarCEP = async cep => {
         alignItems="stretch"
         spacing={8}
       >
-        <ValidatorForm
-          autoComplete="off"
-          onSubmit={handleSubmit}>
+        <div>
           <Paper className={classes.paper} elevation={1}>
             <Typography variant="h5" component="h3">
               Dados pessoais
@@ -170,88 +251,70 @@ export const consultarCEP = async cep => {
             </Typography>
             <Grid container spacing={8}>
               <Grid item xs={12} sm={6}>
-                <TextValidator
+                <TextField
+                    {...values.nome}
                     fullWidth
-                    label="Nome"
                     onChange={({target: {value}}) => {
-                        setName(value);
+                      onFormChange('nome')(value);
                     }}
-                    name="nome"
-                    value={nome}
-                    validators={['required']}
-                    errorMessages={['Campo é obrigatório']}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
-                  <InputLabel htmlFor="email">Email</InputLabel>
-                  <Input
-                    disabled
-                    id="email"
-                    type='text'
-                    value={email}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton className={emailVerified ? classes.success : classes.danger}
-                        onClick={({currentTarget}) => {setAnchorEl(currentTarget)}}>
-                          {
-                            emailVerified
-                            ? <CheckIcon />
-                            : <ErrorIcon />
-                          }
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextValidator
-                    fullWidth
-                    label="Celular"
-                    type="text"
-                    value={celular}
-                    onChange={({target: {value}}) => {
-                      setCelular(value);
-                    }}
-                    validators={['required']}
-                    errorMessages={['Campo é obrigatório']}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextValidator
-                    fullWidth
-                    label="CPF"
-                    type="text"
-                    value={cpf}
-                    onChange={({target: {value}}) => {
-                      setCpf(value);
-                    }}
-                    validators={['required']}
-                    errorMessages={['Campo é obrigatório']}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextValidator
-                    fullWidth
-                    label="Data de nascimento"
-                    type="text"
-                    value={dataNascimento}
-                    onChange={({target: {value}}) => {
-                      setDataNascimento(value);
-                    }}
-                    validators={['required']}
-                    errorMessages={['Campo é obrigatório']}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
+                    fullWidth
+                    label="Email"
+                    value={email}
+                    disabled
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton className={emailVerified ? classes.success : classes.danger}
+                          onClick={({currentTarget}) => {setAnchorEl(currentTarget)}}>
+                            {
+                              emailVerified
+                              ? <CheckIcon />
+                              : <ErrorIcon />
+                            }
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                    {...values.celular}
+                    fullWidth
+                    onChange={({target: {value}}) => {
+                      onFormChange('celular')(value);
+                    }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                    {...values.cpf}
+                    fullWidth
+                    onChange={({target: {value}}) => {
+                      onFormChange('cpf')(value);
+                    }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                    {...values.dataNascimento}
+                    fullWidth
+                    onChange={({target: {value}}) => {
+                      onFormChange('dataNascimento')(value);
+                    }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                    {...values.sexo}
                   fullWidth
                   select
-                  label="Sexo"
-                  value={sexo}
                   onChange={({target: {value}}) => {
-                    setSexo(value);
+                    onFormChange('sexo')(value);
                   }}
                 >
                   {genders.map(option => (
@@ -269,105 +332,82 @@ export const consultarCEP = async cep => {
             </Typography>
             <Grid container spacing={8}>
               <Grid item xs={12} sm={4}>
-                <FormControl fullWidth>
-                  <InputLabel htmlFor="cep">CEP</InputLabel>
-                  <Input
-                    id="cep"
-                    name="cep"
-                    value={cep}
-                    onChange={({target: {value}}) => {
-                      consultarCEP(value);
-                    }}
-                    inputComponent={ZipCodeInput}
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={8}>
-                <TextValidator
+                <TextField
+                    {...values.cep}
                     fullWidth
-                    label="Endereço"
                     onChange={({target: {value}}) => {
-                        setEndereco(value);
+                      handleZipCode(value);
                     }}
-                    name="endereco"
-                    value={endereco}
-                    validators={['required']}
-                    errorMessages={['Campo é obrigatório']}
+                    InputProps={{
+                      inputComponent: ZipCodeInput,
+                    }}
                 />
               </Grid>
-              <Grid item xs={12} sm={4}>
-                <TextValidator
+              <Grid item xs={12} sm={8}>
+                <TextField
+                    {...values.logradouro}
                     fullWidth
-                    label="Número"
                     onChange={({target: {value}}) => {
-                        setNumero(value);
+                      onFormChange('logradouro')(value);
                     }}
-                    name="numero"
-                    value={numero}
-                    validators={['required']}
-                    errorMessages={['Campo é obrigatório']}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
                 <TextField
+                    {...values.numero}
                     fullWidth
-                    label="Complemento"
                     onChange={({target: {value}}) => {
-                      setComplemento(value);
+                      onFormChange('numero')(value);
                     }}
-                    value={complemento}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
-                <TextValidator
+                <TextField
+                    {...values.complemento}
                     fullWidth
-                    label="Bairro"
                     onChange={({target: {value}}) => {
-                        setBairro(value);
+                      onFormChange('complemento')(value);
                     }}
-                    name="bairro"
-                    value={bairro}
-                    validators={['required']}
-                    errorMessages={['Campo é obrigatório']}
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                    {...values.bairro}
+                    fullWidth
+                    onChange={({target: {value}}) => {
+                      onFormChange('bairro')(value);
+                    }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextValidator
+                <TextField
+                    {...values.localidade}
                     fullWidth
-                    label="Cidade"
                     onChange={({target: {value}}) => {
-                        setCidade(value);
+                      onFormChange('localidade')(value);
                     }}
-                    name="cidade"
-                    value={cidade}
-                    validators={['required']}
-                    errorMessages={['Campo é obrigatório']}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextValidator
+                <TextField
+                    {...values.uf}
                     fullWidth
-                    label="Estado"
                     onChange={({target: {value}}) => {
-                        setEstado(value);
+                      onFormChange('uf')(value);
                     }}
-                    name="estado"
-                    value={estado}
-                    validators={['required']}
-                    errorMessages={['Campo é obrigatório']}
                 />
               </Grid>
             </Grid>
           </Paper>
           <Button
-              type="submit"
               variant="contained"
               color="primary"
+              onClick={() => { handleSubmit() }}
               className={classes.button}
           >
             Salvar
           </Button>
-        </ValidatorForm>
+        </div>
       </Grid>
       <Popover
         id="simple-popper"
@@ -395,5 +435,5 @@ export const consultarCEP = async cep => {
 export default compose(
   userQuery,
   editUser,
-  withStyles(styles)
+  withStyles(styles),
 )(Profile);
