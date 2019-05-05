@@ -43,8 +43,7 @@ class validateCpf {
       const firstDigit = this.getValidationDigit( 10 )( CPF )
       const secondDigit = this.getValidationDigit( 11 )( CPF.concat( firstDigit ) )
       
-      return this.isEqual( this.getTwoLastDigits( cpf ) )
-                    ( this.mergeDigits( firstDigit, secondDigit ) )
+      return this.isEqual(this.getTwoLastDigits( cpf ))(this.mergeDigits(firstDigit, secondDigit))
     }
 }
 
