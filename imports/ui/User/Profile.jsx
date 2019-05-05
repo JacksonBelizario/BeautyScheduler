@@ -1,5 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {compose, withHandlers} from 'recompose';
+import {connect} from 'react-redux';
+import moment from 'moment';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -16,6 +18,8 @@ import Loading from '../components/Loading'
 import red from '@material-ui/core/colors/red';
 import green from '@material-ui/core/colors/green';
 import ZipCodeInput from './components/ZipCodeInput';
+import CpfInput from './components/CpfInput';
+import DateInput from './components/DateInput';
 import { validator } from '../../utils/validators';
 import { consultarCEP } from '../../utils/cep';
 
@@ -56,7 +60,7 @@ const genders = [
   },
 ];
 
-const Profile = ({ classes, userData: {user, loading}, editUser }) => {
+const Profile = ({ classes, userData: {user, loading}, editUser, dispatch }) => {
 
   if (loading) {
       return <Loading />;
@@ -72,6 +76,14 @@ const Profile = ({ classes, userData: {user, loading}, editUser }) => {
   
   const [email, setEmail] = useState(emailUser.address);
 
+  const datePt = date => {
+    if (!date) return '';
+
+    const [y, m, d] = date.split('-');
+
+    return `${d}/${m}/${y}`
+  }
+
   const [values, setValues] = useState({
     nome: {
       required: true,
@@ -84,7 +96,7 @@ const Profile = ({ classes, userData: {user, loading}, editUser }) => {
     },
     dataNascimento: {
       label: 'Data de nascimento',
-      value: profile.birthday ||  ''
+      value: profile.birthday ? moment(profile.birthday, 'YYYY-MM-DD').format('DD/MM/YYYY') : ''
     },
     sexo: {
       label: 'Sexo',
@@ -98,7 +110,7 @@ const Profile = ({ classes, userData: {user, loading}, editUser }) => {
     cep: {
       required: true,
       label: 'CEP',
-      value: profile.zipcode ||  ''
+      value: address.zipcode ||  ''
     },
     logradouro: {
       label: 'Endereço',
@@ -186,7 +198,7 @@ const Profile = ({ classes, userData: {user, loading}, editUser }) => {
         nome, celular, cpf, dataNascimento, sexo, cep, logradouro,
         complemento, bairro, numero, localidade, uf
       } = formData();
-      
+
       try {
         const { data } = await editUser({
           variables: {
@@ -195,7 +207,7 @@ const Profile = ({ classes, userData: {user, loading}, editUser }) => {
                 name: nome,
                 phoneNumber: celular,
                 socialNumber: cpf,
-                birthday: dataNascimento,
+                birthday: dataNascimento ? moment(dataNascimento, 'DD/MM/YYYY').format('YYYY-MM-DD') : '',
                 gender: sexo
               },
               address: {
@@ -212,18 +224,29 @@ const Profile = ({ classes, userData: {user, loading}, editUser }) => {
         });
   
         if (data.editUser) {
-          // eslint-disable-next-line no-alert
-          alert('Informações Alteradas com sucesso!');
+          dispatch({
+              type: 'SNACKBAR',
+              show: true,
+              message: 'Informações Alteradas com sucesso!'
+          });
         } else {
-          // eslint-disable-next-line no-alert
-          alert('Ops, não foi possivel salvar suas alterações!');
+          dispatch({
+              type: 'SNACKBAR',
+              show: true,
+              message: 'Ops, não foi possivel salvar suas alterações!'
+          });
         }
       } catch (e) {
         console.log('erro', e);
       }
     } else {
-      alert('Corrija os campos em vermelho');
-    }
+		dispatch({
+			type: 'SNACKBAR',
+			show: true,
+			variant: 'error',
+			message: 'Corrija os campos em destaque'
+		});
+	}
   };
 
 const handleZipCode = async cep => {
@@ -297,6 +320,9 @@ const handleZipCode = async cep => {
                     onChange={({target: {value}}) => {
                       onFormChange('cpf')(value);
                     }}
+                    InputProps={{
+                      inputComponent: CpfInput,
+                    }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -305,6 +331,9 @@ const handleZipCode = async cep => {
                     fullWidth
                     onChange={({target: {value}}) => {
                       onFormChange('dataNascimento')(value);
+                    }}
+                    InputProps={{
+                      inputComponent: DateInput,
                     }}
                 />
               </Grid>
@@ -399,14 +428,18 @@ const handleZipCode = async cep => {
               </Grid>
             </Grid>
           </Paper>
-          <Button
-              variant="contained"
-              color="primary"
-              onClick={() => { handleSubmit() }}
-              className={classes.button}
-          >
-            Salvar
-          </Button>
+		  <Grid
+			container
+			justify="center">
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={() => { handleSubmit() }}
+                className={classes.button}
+            >
+              Salvar
+            </Button>
+          </Grid>
         </div>
       </Grid>
       <Popover
@@ -436,4 +469,10 @@ export default compose(
   userQuery,
   editUser,
   withStyles(styles),
+  connect(state => ({
+      showSnackBar: {
+          message: state.showSnackBar.message,
+          show: state.showSnackBar.show,
+      }
+  })),
 )(Profile);

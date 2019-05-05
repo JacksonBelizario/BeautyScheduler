@@ -4,6 +4,7 @@ const initialState = {
     showSnackBar: {
         type: 'SNACKBAR',
         message: '',
+        variant: 'success',
         show: false,
     },
 };
@@ -15,6 +16,7 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 showSnackBar: {
                     message: action.message,
+                    variant: action.variant || 'success',
                     show: action.show,
                 },
             };

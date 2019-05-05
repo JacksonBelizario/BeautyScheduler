@@ -6,6 +6,7 @@ import {Close as CloseIcon} from "@material-ui/icons";
 import {connect} from 'react-redux';
 import {compose} from 'recompose';
 import {Navbar} from './components/Navbar';
+import SnackbarWrapper from './components/SnackbarWrapper';
 
 const style = {
     container: {
@@ -23,11 +24,25 @@ export const App = compose(
     connect(state => ({
         showSnackBar: {
             message: state.showSnackBar.message,
+            variant: state.showSnackBar.variant,
             show: state.showSnackBar.show,
         }
     }))
-)(({classes, showSnackBar, dispatch}) => (
-    <Fragment>
+)(({classes, showSnackBar, dispatch}) => {
+
+    function closeSnackBar(event, reason) {
+        if (reason === 'clickaway') {
+            return;
+        }
+  
+        dispatch({
+            type: 'SNACKBAR',
+            show: false,
+            message: ''
+        })
+    }
+
+    return (<Fragment>
         <Navbar/>
 
         <div className={classes.container}>
@@ -35,40 +50,19 @@ export const App = compose(
         </div>
 
         <Snackbar
+            anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+            }}
             open={showSnackBar.show}
-            TransitionComponent={(props) => <Slide {...props} direction="up"/>}
-            ContentProps={{
-                'aria-describedby': 'message-id',
-            }}
-            message={<span id="message-id">{showSnackBar.message}</span>}
-            autoHideDuration={2000}
-            onClose={(event, reason) => {
-                if (reason === 'clickaway') {
-                    return;
-                }
-
-                dispatch({
-                    type: 'SNACKBAR',
-                    show: false,
-                    message: ''
-                })
-            }}
-            action={
-                <IconButton
-                    key="close"
-                    aria-label="Close"
-                    color="inherit"
-                    onClick={() => {
-                        dispatch({
-                            type: 'SNACKBAR',
-                            show: false,
-                            message: ''
-                        })
-                    }}
-                >
-                    <CloseIcon/>
-                </IconButton>
-            }
-        />
-    </Fragment>
-));
+            autoHideDuration={3000}
+            onClose={closeSnackBar}
+            >
+            <SnackbarWrapper
+                onClose={closeSnackBar}
+                variant={showSnackBar.variant}
+                message={showSnackBar.message}
+            />
+        </Snackbar>
+    </Fragment>);
+});
