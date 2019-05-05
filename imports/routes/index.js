@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import Hello from '../ui/Hello.jsx';
 import Login from '../ui/Login.jsx';
+import Calendar from '../ui/Scheduler/Calendar.jsx';
 import UserProfile from '../ui/User/Profile.jsx';
 
 export const RouterPaths = {
@@ -32,7 +33,7 @@ const PrivateRoute = ({ component: Component, path, ...rest }) => (
 
 export const Routes = () => (
   <Switch>
-      <PrivateRoute exact path={RouterPaths.ROOT} component={Hello} />
+      <PrivateRoute exact path={RouterPaths.ROOT} component={Calendar} />
 
       <Route path={`/${RouterPaths.LOGIN}`} component={Login} />
 

@@ -60,7 +60,7 @@ const Login = ({onLogin, createAccount, classes, dispatch}) => {
                                 name="nome"
                                 value={name}
                                 validators={['required']}
-                                errorMessages={['Campo é obrigatório']}
+                                errorMessages={['Campo obrigatório']}
                             />
                         ) : ''
                     }
@@ -73,7 +73,7 @@ const Login = ({onLogin, createAccount, classes, dispatch}) => {
                         name="email"
                         value={email}
                         validators={['required', 'isEmail']}
-                        errorMessages={['Campo é obrigatório', 'email inválido']}
+                        errorMessages={['Campo obrigatório', 'email inválido']}
                     />
                     <TextValidator
                         fullWidth
