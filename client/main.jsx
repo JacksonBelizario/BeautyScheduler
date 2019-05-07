@@ -17,6 +17,8 @@ const theme = createMuiTheme({
     palette: {
         primary: { light: pink[300], main: pink[500], dark: pink[700] },
         secondary: { light: green[300], main: green[500], dark: green[700] },
+        success: { light: green[300], main: green[500], dark: green[700] },
+        info: { light: blueGrey[300], main: blueGrey[500], dark: blueGrey[700] },
         danger: { light: red[300], main: red[500], dark: red[700] },
     },
 

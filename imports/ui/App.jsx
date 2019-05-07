@@ -7,6 +7,7 @@ import {connect} from 'react-redux';
 import {compose} from 'recompose';
 import {Navbar} from './components/Navbar';
 import SnackbarWrapper from './components/SnackbarWrapper';
+import '../assets/css/main.css'
 
 const style = {
     container: {
