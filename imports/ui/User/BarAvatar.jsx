@@ -46,7 +46,7 @@ const BarAvatarComponent = ({ userData: { user = {} } }) => {
         <MenuItem
           onClick={handleClose}
           component={Link}
-          to={`/${RouterPaths.USER_PROFILE}`}
+          to={RouterPaths.USER_PROFILE}
         >
           Perfil
         </MenuItem>

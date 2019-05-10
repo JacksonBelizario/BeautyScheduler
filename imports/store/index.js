@@ -4,7 +4,7 @@ const initialState = {
     showSnackBar: {
         type: 'SNACKBAR',
         message: '',
-        variant: 'success',
+        variant: 'info',
         show: false,
     },
 };

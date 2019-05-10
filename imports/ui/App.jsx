@@ -1,8 +1,7 @@
 import React, {Fragment} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import {Routes} from '../routes';
-import {IconButton, Slide, Snackbar} from "@material-ui/core";
-import {Close as CloseIcon} from "@material-ui/icons";
+import {Snackbar} from "@material-ui/core";
 import {connect} from 'react-redux';
 import {compose} from 'recompose';
 import {Navbar} from './components/Navbar';

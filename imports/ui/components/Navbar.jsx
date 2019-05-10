@@ -47,7 +47,7 @@ function ButtonAppBar({classes, location: {pathname}}) {
                     ) : pathname !== '/login' ? (
                         <Button
                             component={Link}
-                            to={`/${RouterPaths.LOGIN}`}
+                            to={RouterPaths.LOGIN}
                             color="inherit"
                             variant="outlined"
                         >

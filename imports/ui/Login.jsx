@@ -12,6 +12,7 @@ import Avatar from '@material-ui/core/Avatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {LockOpenOutlined, LockOutlined} from '@material-ui/icons';
 import {TextValidator, ValidatorForm} from 'react-material-ui-form-validator';
+import { RouterPaths } from '../routes';
 
 const Login = ({onLogin, createAccount, classes, dispatch}) => {
     const [name, setName] = useState('');
@@ -177,8 +178,8 @@ export default compose(
             Meteor.loginWithPassword(email, password, e => {
                 if (!e) {
                     history.replace();
-                    //history.push(`/${RouterPaths.USER_PROFILE}`);
-                    history.push('/');
+                    //history.push(RouterPaths.USER_PROFILE);
+                    history.push(RouterPaths.ROOT);
                     return;
                 }
 
@@ -216,7 +217,7 @@ export default compose(
                 e => {
                     if (!e) {
                         history.replace();
-                        history.push('/');
+                        history.push(RouterPaths.ROOT);
                         return;
                     }
 
