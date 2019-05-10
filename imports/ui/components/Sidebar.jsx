@@ -1,25 +1,33 @@
-import React from 'react';
-import {makeStyles} from '@material-ui/styles';
+import React, { useState } from 'react';
+import {compose} from 'recompose';
+import { withStyles } from '@material-ui/core/styles';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import { Link } from 'react-router-dom';
+import Collapse from '@material-ui/core/Collapse';
+import { withRouter } from 'react-router-dom';
 import {
     Heart as HeartIcon,
-    User as UserIcon
+    User as UserIcon,
+    Users as PeopleIcon,
+    Layers as LayersIcon,
+    Scissors as ScissorsIcon,
+    Circle as CircleIcon,
+    ChevronDown as ChevronDownIcon,
+    ChevronRight as ChevronRightIcon
 } from 'react-feather';
 
 import {RouterPaths} from '../../routes';
 
-const useStyles = makeStyles({
+const styles = theme => ({
     list: {
         width: 250,
     },
-    fullList: {
-        width: 'auto',
+    nested: {
+      margin: [[0, 20, 0, 4], '!important'],
     },
 });
 
@@ -44,13 +52,52 @@ const menu = [
                 title: 'Perfil',
                 to: RouterPaths.USER_PROFILE,
                 icon: <UserIcon/>
-            }
+            },
         ]
+    },
+    {
+        type: "nested",
+        icon: <LayersIcon/>,
+        title: 'Cadastros',
+        open: true,
+        list: [
+            {
+                title: 'Funcionários',
+                to: RouterPaths.USER_PROFILE,
+            },
+            {
+                title: 'Produtos',
+                to: RouterPaths.USER_PROFILE,
+            },
+            {
+                title: 'Serviços',
+                to: RouterPaths.USER_PROFILE,
+            },
+        ]
+    },
+    {
+        type: "divider"
     },
 ];
 
-export const Sidebar = ({showDrawer, setShowDrawer}) => {
-    const classes = useStyles();
+const SidebarComponent = ({classes, history, showDrawer, setShowDrawer}) => {
+    const [list, setList] = useState(menu);
+
+    const handleOpen = (index, open) => {
+        setList({
+            ...list,
+            [index]: {
+                ...list[index],
+                open
+            }
+        });
+    };
+
+    const handleClick = to => {
+        setShowDrawer(false);
+        history.replace();
+        history.push(to);
+    };
 
     const sideList = (
         <div className={classes.list}>
@@ -58,7 +105,7 @@ export const Sidebar = ({showDrawer, setShowDrawer}) => {
             if (item.type === "list") {
                 return (<List key={index}>
                     {item.list.map(({title, to, icon}, index) => (
-                        <ListItem button key={index} component={Link} to={to}>
+                        <ListItem button key={index} onClick={() => { handleClick(to) }}>
                             <ListItemIcon>{icon}</ListItemIcon>
                             <ListItemText primary={title}/>
                         </ListItem>
@@ -66,6 +113,26 @@ export const Sidebar = ({showDrawer, setShowDrawer}) => {
                 </List>);
             } else if (item.type === "divider") {
                 return <Divider key={index}/>;
+            } else if (item.type === "nested") {
+                return (<div key={index}>
+                    <ListItem button onClick={() => { handleOpen(index, !list[index].open) }}>
+                        <ListItemIcon>
+                            {item.icon}
+                        </ListItemIcon>
+                        <ListItemText inset primary={item.title} />
+                        {list[index].open ? <ChevronDownIcon size={16} /> : <ChevronRightIcon size={16} />}
+                    </ListItem>
+                    <Collapse in={list[index].open} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        {item.list.map(({title, to, icon}, index) => (
+                            <ListItem button key={index} onClick={() => { handleClick(to) }}>
+                                <ListItemIcon className={classes.nested}><CircleIcon size={16} /></ListItemIcon>
+                                <ListItemText primary={title}/>
+                            </ListItem>
+                        ))}
+                    </List>
+                </Collapse>
+                </div>);
             }
         })}
         </div>
@@ -85,9 +152,6 @@ export const Sidebar = ({showDrawer, setShowDrawer}) => {
                 <div
                     tabIndex={0}
                     role="button"
-                    onClick={() => {
-                        setShowDrawer(false)
-                    }}
                     onKeyDown={() => {
                         setShowDrawer(false)
                     }}
@@ -98,3 +162,8 @@ export const Sidebar = ({showDrawer, setShowDrawer}) => {
         </div>
     );
 };
+
+export const Sidebar = compose(
+    withRouter,
+    withStyles(styles)
+)(SidebarComponent);
