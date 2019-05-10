@@ -23,6 +23,7 @@ const theme = createMuiTheme({
     },
 
     typography: {
+        fontFamily: 'Rubik',
         useNextVariants: true,
     },
 

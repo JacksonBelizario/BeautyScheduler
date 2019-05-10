@@ -6,6 +6,7 @@ import {connect} from 'react-redux';
 import {compose} from 'recompose';
 import {Navbar} from './components/Navbar';
 import SnackbarWrapper from './components/SnackbarWrapper';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import '../assets/css/main.css'
 
 const style = {
@@ -43,6 +44,7 @@ export const App = compose(
     }
 
     return (<Fragment>
+        <CssBaseline/>
         <Navbar/>
 
         <div className={classes.container}>

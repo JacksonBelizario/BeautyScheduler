@@ -14,7 +14,7 @@ import {Sidebar} from './Sidebar';
 
 const styles = {
     root: {
-        flexGrow: 1,
+        // flexGrow: 1,
     },
     grow: {
         flexGrow: 1,
@@ -39,7 +39,7 @@ function ButtonAppBar({classes, location: {pathname}}) {
                     >
                         <MenuIcon/>
                     </IconButton>
-                    <Typography variant="h6" color="inherit" className={classes.grow}>
+                    <Typography variant="h5" color="inherit" className={classes.grow}>
                         App Beleza
                     </Typography>
                     {Meteor.userId() ? (

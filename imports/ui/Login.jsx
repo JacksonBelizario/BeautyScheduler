@@ -9,7 +9,6 @@ import {FormControlLabel, Switch, Typography} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 
 import Avatar from '@material-ui/core/Avatar';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import {LockOpenOutlined, LockOutlined} from '@material-ui/icons';
 import {TextValidator, ValidatorForm} from 'react-material-ui-form-validator';
 import { RouterPaths } from '../routes';
@@ -39,7 +38,6 @@ const Login = ({onLogin, createAccount, classes, dispatch}) => {
     return (
 
         <main className={classes.main}>
-            <CssBaseline/>
             <div className={classes.flex}>
                 <Avatar className={classes.avatar}>
                     <LockOutlined/>

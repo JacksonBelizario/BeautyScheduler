@@ -10,11 +10,9 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
 import { withRouter } from 'react-router-dom';
 import {
-    Heart as HeartIcon,
+    Home as HomeIcon,
     User as UserIcon,
-    Users as PeopleIcon,
     Layers as LayersIcon,
-    Scissors as ScissorsIcon,
     Circle as CircleIcon,
     ChevronDown as ChevronDownIcon,
     ChevronRight as ChevronRightIcon
@@ -38,7 +36,7 @@ const menu = [
             {
                 title: 'Home',
                 to: RouterPaths.ROOT,
-                icon: <HeartIcon/>
+                icon: <HomeIcon/>
             }
         ]
     },
@@ -63,15 +61,15 @@ const menu = [
         list: [
             {
                 title: 'Funcionários',
-                to: RouterPaths.USER_PROFILE,
+                to: RouterPaths.SERVICES,
             },
             {
                 title: 'Produtos',
-                to: RouterPaths.USER_PROFILE,
+                to: RouterPaths.SERVICES,
             },
             {
                 title: 'Serviços',
-                to: RouterPaths.USER_PROFILE,
+                to: RouterPaths.SERVICES,
             },
         ]
     },
