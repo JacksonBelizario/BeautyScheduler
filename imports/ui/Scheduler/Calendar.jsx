@@ -164,7 +164,7 @@ const MyCalendar = props => {
             <Button onClick={handleClose}>
                 Cancelar
             </Button>
-            <Button color="secondary"
+            <Button color="primary"
                 onClick={() => {
                     setNewAppointment(), handleClose();
                 }}>
@@ -218,13 +218,13 @@ const MyCalendar = props => {
                 Cancelar
             </Button>
             <Button
-                color="primary"
+                color="secondary"
                 onClick={() => {
                     deleteEvent(), handleClose();
                 }}>
                 Remover
             </Button>
-            <Button color="secondary"
+            <Button color="primary"
                 onClick={() => {
                     updateEvent(), handleClose();
                 }}>

@@ -1,17 +1,17 @@
 import React, {useState} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import {compose} from 'recompose';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+import {AppBar, Badge, Button, IconButton, Toolbar, Typography} from '@material-ui/core';
 import {BarAvatar} from '../User/BarAvatar.jsx';
 import {RouterPaths} from '../../routes';
 import {Link, withRouter} from 'react-router-dom';
 import {Sidebar} from './Sidebar';
 import {config} from '../../config.js';
+import {
+    Menu as MenuIcon,
+    Mail as MailIcon,
+    Bell as NotificationsIcon,
+} from 'react-feather';
 
 const styles = theme => ({
     root: {
@@ -19,10 +19,10 @@ const styles = theme => ({
         margin: theme.spacing.unit,
     },
     appBar: {
-        borderRadius: '10px',
+        borderRadius: '8px',
         backgroundColor: '#fff',
         color: theme.palette.primary.main,
-        boxShadow: '0 4px 20px 0 rgba(0,0,0,.05)'
+        boxShadow: theme.boxShadow
     },
     grow: {
         flexGrow: 1,
@@ -30,6 +30,15 @@ const styles = theme => ({
     menuButton: {
         marginLeft: -12,
         marginRight: 20,
+    },
+    flex: {
+        display: 'flex',
+    },
+    sectionDesktop: {
+      display: 'none',
+      [theme.breakpoints.up('md')]: {
+        display: 'block',
+      },
     },
 });
 
@@ -50,8 +59,21 @@ function ButtonAppBar({classes, location: {pathname}}) {
                     <Typography variant="h5" color="inherit" className={classes.grow}>
                         {config.appName}
                     </Typography>
-                    {Meteor.userId() ? (
-                        <BarAvatar/>
+                    {Meteor.userId() ? (<div>
+                            <div className={classes.flex}>
+                                <IconButton color="inherit" className={classes.sectionDesktop}>
+                                    <Badge badgeContent={4} color="secondary">
+                                        <MailIcon />
+                                    </Badge>
+                                </IconButton>
+                                <IconButton color="inherit" className={classes.sectionDesktop}>
+                                    <Badge badgeContent={17} color="secondary">
+                                        <NotificationsIcon />
+                                    </Badge>
+                                </IconButton>
+                                <BarAvatar/>
+                            </div>
+                        </div>
                     ) : pathname !== '/login' ? (
                         <Button
                             component={Link}

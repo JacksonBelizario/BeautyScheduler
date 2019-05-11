@@ -8,12 +8,13 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 2,
     paddingTop: theme.spacing.unit * 4,
     paddingBottom: theme.spacing.unit * 2,
+    boxShadow: theme.boxShadow
   },
 });
 
 
 export default withStyles(styles)(
     ({classes, children}) => (
-        <Paper className={classes.paper} elevation={1}>{children}</Paper>
+        <Paper className={classes.paper} elevation={0}>{children}</Paper>
     )
 );

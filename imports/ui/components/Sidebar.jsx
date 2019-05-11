@@ -11,7 +11,6 @@ import Collapse from '@material-ui/core/Collapse';
 import { withRouter } from 'react-router-dom';
 import {config} from '../../config.js';
 import {
-    Home as HomeIcon,
     User as UserIcon,
     Layers as LayersIcon,
     Circle as CircleIcon,

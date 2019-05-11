@@ -113,17 +113,24 @@ h1{
 }
 
 .rbc-toolbar-label {
-    font-weight: bold;
     font-size: 22px;
-    color: #c2185b
+    color: #7b1fa2
 }
 
 .rbc-date-cell {
-    color: #e91e63;
+    color: #c2185b;
 }
 
 .rbc-today {
     background-color: rgb(196, 226, 250) !important;
+}
+
+.rbc-event {
+    background-color: #E30425;
+}
+
+.rbc-event.rbc-selected {
+    background-color: rgb(199, 1, 31);
 }
 
 @media (max-width: 480px) {

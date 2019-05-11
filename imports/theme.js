@@ -29,7 +29,9 @@ const theme = createMuiTheme({
 
     backgroundButtonGoogle: {
         backgroundColor: '#DE4C33',
-    }
+    },
+    
+    boxShadow: '0 4px 20px 0 rgba(0,0,0,.05)'
 });
 
 export default theme;
