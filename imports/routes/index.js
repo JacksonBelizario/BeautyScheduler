@@ -5,6 +5,7 @@ import Sample from '../ui/Sample.jsx';
 import Login from '../ui/Login.jsx';
 import Calendar from '../ui/Scheduler/Calendar.jsx';
 import UserProfile from '../ui/User/Profile.jsx';
+import Services from '../ui/Services.jsx';
 
 export const RouterPaths = {
   ROOT: '/',
@@ -12,6 +13,7 @@ export const RouterPaths = {
   REGISTER: '/register',
   USER_PROFILE: '/profile',
   SERVICES: '/services',
+  PRODUCTS: '/products',
 };
 
 const PrivateRoute = ({ component: Component, path, ...rest }) => (
@@ -34,12 +36,15 @@ const PrivateRoute = ({ component: Component, path, ...rest }) => (
 
 export const Routes = () => (
   <Switch>
-      <PrivateRoute exact path={RouterPaths.ROOT} component={Calendar} />
 
       <Route path={RouterPaths.LOGIN} component={Login} />
 
-      <Route path={RouterPaths.USER_PROFILE} component={UserProfile} />
+      <PrivateRoute exact path={RouterPaths.ROOT} component={Calendar} />
 
-      <Route path={RouterPaths.SERVICES} component={Sample} />
+      <PrivateRoute path={RouterPaths.USER_PROFILE} component={UserProfile} />
+
+      <PrivateRoute path={RouterPaths.SERVICES} component={Services} />
+
+      <PrivateRoute path={RouterPaths.PRODUCTS} component={Sample} />
   </Switch>
 );

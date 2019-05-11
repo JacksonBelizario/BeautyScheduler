@@ -14,7 +14,11 @@ const styles = theme => ({
 
 
 export default withStyles(styles)(
-    ({classes, children}) => (
-        <Paper className={classes.paper} elevation={0}>{children}</Paper>
+    ({classes, children, ...props}) => (
+        <Paper
+          {...props}
+          className={classes.paper}
+          elevation={0}
+        >{children}</Paper>
     )
 );

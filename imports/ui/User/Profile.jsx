@@ -3,7 +3,6 @@ import { compose, withHandlers } from 'recompose';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -22,14 +21,9 @@ import CpfInput from './components/CpfInput';
 import DateInput from './components/DateInput';
 import { validator } from '../../utils/validators';
 import { consultarCEP } from '../../utils/cep';
+import Paper from '../components/Paper.jsx';
 
 const styles = theme => ({
-  paper: {
-    ...theme.mixins.gutters(),
-    marginTop: theme.spacing.unit * 2,
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2,
-  },
   button: {
     marginTop: theme.spacing.unit * 3,
     alignSelf: 'end'
@@ -264,7 +258,7 @@ const Profile = ({ classes, userData: { user, loading }, editUser, dispatch }) =
         alignItems="stretch"
         spacing={8}
       >
-        <Paper className={classes.paper} elevation={1}>
+        <Paper>
           <Typography variant="h5" component="h3">
             Dados pessoais
             </Typography>
@@ -354,7 +348,7 @@ const Profile = ({ classes, userData: { user, loading }, editUser, dispatch }) =
             </Grid>
           </Grid>
         </Paper>
-        <Paper className={classes.paper} elevation={1}>
+        <Paper>
           <Typography variant="h5" component="h3">
             Endereço
             </Typography>
