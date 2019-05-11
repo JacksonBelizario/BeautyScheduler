@@ -10,7 +10,7 @@ import { Provider } from 'react-redux';
 import { store } from '../imports/store';
 import ApolloClient from 'apollo-client';
 import App from '/imports/ui/App.jsx';
-import theme from './theme.js'
+import theme from '../imports/theme.js'
 
 const client = new ApolloClient({
   link: new DDPLink(),

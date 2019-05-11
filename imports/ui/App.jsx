@@ -6,7 +6,7 @@ import SnackbarWrapper from './components/SnackbarWrapper';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import '../assets/css/main.css'
 
-const style = {
+const style = theme => ({
     container: {
         display: 'flex',
         flexDirection: 'column',
@@ -14,8 +14,10 @@ const style = {
         flexShrink: 1,
         flexBasis: 'auto',
         padding: 10,
+        marginLeft: theme.spacing.unit,
+        marginRight: theme.spacing.unit,
     },
-};
+});
 
 export const App = ({classes}) => (
 <Fragment>

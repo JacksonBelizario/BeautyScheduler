@@ -9,6 +9,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
 import { withRouter } from 'react-router-dom';
+import {config} from '../../config.js';
 import {
     Home as HomeIcon,
     User as UserIcon,
@@ -17,6 +18,7 @@ import {
     ChevronDown as ChevronDownIcon,
     ChevronRight as ChevronRightIcon
 } from 'react-feather';
+import { MakeUpMirror } from '../../icons.js';
 
 import {RouterPaths} from '../../routes';
 
@@ -34,9 +36,9 @@ const menu = [
         type: "list",
         list: [
             {
-                title: 'Home',
+                title: config.appName,
                 to: RouterPaths.ROOT,
-                icon: <HomeIcon/>
+                icon: <MakeUpMirror/>
             }
         ]
     },

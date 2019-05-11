@@ -11,10 +11,18 @@ import {BarAvatar} from '../User/BarAvatar.jsx';
 import {RouterPaths} from '../../routes';
 import {Link, withRouter} from 'react-router-dom';
 import {Sidebar} from './Sidebar';
+import {config} from '../../config.js';
 
-const styles = {
+const styles = theme => ({
     root: {
         // flexGrow: 1,
+        margin: theme.spacing.unit,
+    },
+    appBar: {
+        borderRadius: '10px',
+        backgroundColor: '#fff',
+        color: theme.palette.primary.main,
+        boxShadow: '0 4px 20px 0 rgba(0,0,0,.05)'
     },
     grow: {
         flexGrow: 1,
@@ -23,13 +31,13 @@ const styles = {
         marginLeft: -12,
         marginRight: 20,
     },
-};
+});
 
 function ButtonAppBar({classes, location: {pathname}}) {
     const [showDrawer, setShowDrawer] = useState(false);
     return (
         <div className={classes.root}>
-            <AppBar position="static">
+            <AppBar position="static" className={classes.appBar}>
                 <Toolbar>
                     <IconButton
                         className={classes.menuButton}
@@ -40,7 +48,7 @@ function ButtonAppBar({classes, location: {pathname}}) {
                         <MenuIcon/>
                     </IconButton>
                     <Typography variant="h5" color="inherit" className={classes.grow}>
-                        App Beleza
+                        {config.appName}
                     </Typography>
                     {Meteor.userId() ? (
                         <BarAvatar/>

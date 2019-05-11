@@ -1,10 +1,10 @@
 import { createMuiTheme } from '@material-ui/core/styles';
-import { blueGrey, green, red, pink } from '@material-ui/core/colors';
+import { blueGrey, purple, red, green } from '@material-ui/core/colors';
 
 const theme = createMuiTheme({
     palette: {
-        primary: { light: pink[300], main: pink[500], dark: pink[700] },
-        secondary: { light: green[300], main: green[500], dark: green[700] },
+        primary: { light: purple[600], main: purple[700], dark: purple[900] },
+        secondary: { light: red[400], main: red[600], dark: red[800] },
         success: { light: green[300], main: green[500], dark: green[700] },
         info: { light: blueGrey[300], main: blueGrey[500], dark: blueGrey[700] },
         danger: { light: red[300], main: red[500], dark: red[700] },
@@ -29,7 +29,7 @@ const theme = createMuiTheme({
 
     backgroundButtonGoogle: {
         backgroundColor: '#DE4C33',
-    },
+    }
 });
 
 export default theme;

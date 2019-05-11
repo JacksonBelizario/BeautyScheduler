@@ -1,12 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {Snackbar} from "@material-ui/core";
 import classNames from 'classnames';
+import {Snackbar, IconButton, SnackbarContent} from "@material-ui/core";
 import {green, amber} from '@material-ui/core/colors';
-import IconButton from '@material-ui/core/IconButton';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import {
 	AlertCircle as ErrorIcon,
 	AlertTriangle as WarningIcon,
