@@ -1,9 +1,6 @@
 import React, {Fragment} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import {Routes} from '../routes';
-import {Snackbar} from "@material-ui/core";
-import {connect} from 'react-redux';
-import {compose} from 'recompose';
 import {Navbar} from './components/Navbar';
 import SnackbarWrapper from './components/SnackbarWrapper';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -20,51 +17,18 @@ const style = {
     },
 };
 
-export const App = compose(
-    withStyles(style),
-    connect(state => ({
-        showSnackBar: {
-            message: state.showSnackBar.message,
-            variant: state.showSnackBar.variant,
-            show: state.showSnackBar.show,
-        }
-    }))
-)(({classes, showSnackBar, dispatch}) => {
+export const App = ({classes}) => (
+<Fragment>
+    <CssBaseline/>
 
-    function closeSnackBar(event, reason) {
-        if (reason === 'clickaway') {
-            return;
-        }
-  
-        dispatch({
-            type: 'SNACKBAR',
-            show: false,
-            message: ''
-        })
-    }
+    <Navbar/>
 
-    return (<Fragment>
-        <CssBaseline/>
-        <Navbar/>
+    <div className={classes.container}>
+        <Routes/>
+    </div>
 
-        <div className={classes.container}>
-            <Routes/>
-        </div>
+    <SnackbarWrapper />
+    
+</Fragment>);
 
-        <Snackbar
-            anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'center',
-            }}
-            open={showSnackBar.show}
-            autoHideDuration={3000}
-            onClose={closeSnackBar}
-            >
-            <SnackbarWrapper
-                onClose={closeSnackBar}
-                variant={showSnackBar.variant}
-                message={showSnackBar.message}
-            />
-        </Snackbar>
-    </Fragment>);
-});
+export default withStyles(style)(App);

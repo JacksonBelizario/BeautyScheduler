@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
+import {Snackbar} from "@material-ui/core";
 import classNames from 'classnames';
-import green from '@material-ui/core/colors/green';
-import amber from '@material-ui/core/colors/amber';
+import {green, amber} from '@material-ui/core/colors';
 import IconButton from '@material-ui/core/IconButton';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import { withStyles } from '@material-ui/core/styles';
@@ -45,7 +46,7 @@ const styles = theme => ({
   },
 });
 
-const SnackbarWrapper = ({ classes, className, message, onClose, variant, ...other }) => {
+const SnackbarComponent = ({ classes, className, message, onClose, variant, ...other }) => {
   const Icon = variantIcon[variant];
 
   return (
@@ -74,11 +75,51 @@ const SnackbarWrapper = ({ classes, className, message, onClose, variant, ...oth
   );
 }
 
-SnackbarWrapper.propTypes = {
+SnackbarComponent.propTypes = {
   className: PropTypes.string,
   message: PropTypes.node,
   onClose: PropTypes.func,
   variant: PropTypes.oneOf(['success', 'warning', 'error', 'info']).isRequired,
 };
 
-export default withStyles(styles)(SnackbarWrapper);
+const SnackBarMain = withStyles(styles)(SnackbarComponent);
+
+const SnackbarWrapper = ({showSnackBar, dispatch}) => {
+
+  const closeSnackBar = (event, reason) => {
+      if (reason === 'clickaway') {
+          return;
+      }
+
+      dispatch({
+          type: 'SNACKBAR',
+          show: false,
+          message: ''
+      })
+  }
+
+  return (
+    <Snackbar
+        anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center',
+        }}
+        open={showSnackBar.show}
+        autoHideDuration={3000}
+        onClose={closeSnackBar}
+        >
+        <SnackBarMain
+            onClose={closeSnackBar}
+            variant={showSnackBar.variant}
+            message={showSnackBar.message}
+        />
+    </Snackbar>);
+};
+
+export default connect(state => ({
+  showSnackBar: {
+      message: state.showSnackBar.message,
+      variant: state.showSnackBar.variant,
+      show: state.showSnackBar.show,
+  }
+}))(SnackbarWrapper);
