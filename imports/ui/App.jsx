@@ -5,6 +5,7 @@ import {Navbar} from './components/Navbar';
 import SnackbarWrapper from './components/SnackbarWrapper';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import '../assets/css/main.css'
+import 'react-perfect-scrollbar/dist/css/styles.css';
 
 const style = theme => ({
     container: {
