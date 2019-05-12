@@ -12,19 +12,8 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 import PerfectScrollbar from 'react-perfect-scrollbar'
-
-import { compose } from 'recompose';
-import { connect } from 'react-redux';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import { createServiceMutation } from '../api/Services';
-
 import {
     PlusCircle as PlusCircleIcon,
     Edit2 as EditIcon,
@@ -128,104 +117,12 @@ const styles = theme => ({
     },
 });
 
-const ServiceComponent = ({open, setOpen, createService, dispatch}) => {
-
-    const [name, setName] = useState("");
-    const [duration, setDuration] = useState(0);
-  
-    function handleClose() {
-        setOpen(false);
-    }
-  
-    async function handleSave() {
-        try {
-          const { data } = await createService({
-            variables: {
-              service: {
-                name,
-                duration
-              },
-            },
-          });
-  
-          if (data.createService) {
-              console.log({data});
-            dispatch({
-              type: 'SNACKBAR',
-              show: true,
-              message: 'Informações Inseridas com sucesso!'
-            });
-          } else {
-            dispatch({
-              type: 'SNACKBAR',
-              show: true,
-              message: 'Ops, não foi possivel salvar suas alterações!'
-            });
-          }
-        } catch (e) {
-          console.log('erro', e);
-        }
-        setOpen(false);
-    }
-
-    return (
-        <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title">Novo Serviço</DialogTitle>
-            <DialogContent>
-                <TextField
-                    autoFocus
-                    name="nome"
-                    margin="dense"
-                    label="Nome"
-                    value={name}
-                    type="text"
-                    onChange={({ target: { value } }) => {
-                        setName(value);
-                    }}
-                    fullWidth
-                />
-                <TextField
-                    autoFocus
-                    name="duration"
-                    margin="dense"
-                    label="Duração"
-                    value={duration}
-                    type="number"
-                    onChange={({ target: { value } }) => {
-                        setDuration(value);
-                    }}
-                    fullWidth
-                />
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={handleClose} color="secondary">
-                    Cancelar
-                </Button>
-                <Button onClick={handleSave} color="primary">
-                    Salvar
-                </Button>
-            </DialogActions>
-        </Dialog>)
-}
-
-const Service = compose(
-    createServiceMutation,
-    connect(state => ({
-        showSnackBar: {
-            message: state.showSnackBar.message,
-            show: state.showSnackBar.show,
-        }
-  })),
-)(ServiceComponent);
-
 const Services = ({classes}) => {
 
     const [active, setActive] = useState(-1);
-    const [open, setOpen] = useState(false);
 
     return (
         <Grid container className={classes.box}>
-            <Service open={open} setOpen={setOpen} />
             <Grid item xs={12} sm={5} className={classes.appSidebar}>
                 <Grid container className={classes.spacing} alignItems="center">
                     <Grid item xs>
@@ -237,7 +134,7 @@ const Services = ({classes}) => {
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <IconButton className={classes.iconButton} aria-label="Adicionar" onClick={() => setOpen(true)}>
+                        <IconButton className={classes.iconButton} aria-label="Adicionar">
                             <PlusCircleIcon className={classes.add} />
                         </IconButton>
                     </Grid>

@@ -142,7 +142,6 @@ export const editUser = graphql(
       fetchPolicy: 'cache-and-network',
     },
     props: data => {
-      console.log({ data });
       return data;
     },
   });
