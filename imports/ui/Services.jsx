@@ -13,6 +13,7 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import PerfectScrollbar from 'react-perfect-scrollbar'
+import Loading from './components/Loading';
 
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
@@ -23,7 +24,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { createServiceMutation } from '../api/Services';
+import { servicesQuery, removeServiceMutation, createServiceMutation } from '../api/Services';
 
 import {
     PlusCircle as PlusCircleIcon,
@@ -149,7 +150,7 @@ const ServiceComponent = ({open, setOpen, createService, dispatch}) => {
           });
   
           if (data.createService) {
-              console.log({data});
+              console.log({createService: data});
             dispatch({
               type: 'SNACKBAR',
               show: true,
@@ -218,10 +219,34 @@ const Service = compose(
   })),
 )(ServiceComponent);
 
-const Services = ({classes}) => {
+const Services = ({classes, servicesData: { services, loading }, removeService}) => {
+
+    if (loading) {
+      return <Loading />;
+    }
 
     const [active, setActive] = useState(-1);
     const [open, setOpen] = useState(false);
+    const [removed, setRemoved] = useState(0);
+    console.log({services});
+
+    
+    const generateColor = () => {
+        return '#' +  Math.random().toString(16).substr(-6);
+    }
+
+    const remove = async (id) => {
+        console.log('remove', id);
+        try {
+            const { data } = await removeService({ variables: { id } } );
+            if (data.removeService) {
+                console.log(data);
+                setRemoved(id);
+            }
+        } catch(erro) {
+            console.log('erro', erro);
+        }
+    }
 
     return (
         <Grid container className={classes.box}>
@@ -246,20 +271,20 @@ const Services = ({classes}) => {
                     <PerfectScrollbar>
                         <List className={classes.list}>
                         {
-                            elements.map((el, index) => (
+                            services.map((el, index) => (
                                 <ListItem
                                     button
                                     onClick={() => setActive(index)}
                                     alignItems="flex-start"
                                     key={index}>
                                     <ListItemAvatar>
-                                        <Avatar alt={el.name} src={el.avatar} />
+                                        <Avatar style={{backgroundColor: generateColor()}} >{el.name && el.name.split(' ').slice(0, 2).map(letters => letters[0]).join('')}</Avatar>
                                     </ListItemAvatar>
                                     <ListItemText
                                         primary={el.name}
                                         secondary={
                                             <Fragment>
-                                                {el.email}
+                                                {el.name}
                                             </Fragment>
                                         }
                                     />
@@ -283,7 +308,7 @@ const Services = ({classes}) => {
                                                     aria-label="Remover"
                                                     component="button"
                                                     className={classes.remove}
-                                                    onClick={() => {}}>
+                                                    onClick={() => remove(el._id)}>
                                                     <RemoveIcon size={16} />
                                                 </Link>
                                             </Grid>
@@ -368,4 +393,8 @@ const Services = ({classes}) => {
     )
 }
 
-export default withStyles(styles)(Services);
+export default compose(
+    servicesQuery,
+    removeServiceMutation,
+    withStyles(styles)
+)(Services);
