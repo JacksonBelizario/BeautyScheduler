@@ -24,7 +24,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { servicesQuery, removeServiceMutation, createServiceMutation } from '../api/Services';
+import { servicesQuery, removeServiceMutation, createServiceMutation, editServiceMutation } from '../api/Services';
 
 import {
     PlusCircle as PlusCircleIcon,
@@ -129,49 +129,82 @@ const styles = theme => ({
     },
 });
 
-const ServiceComponent = ({open, setOpen, createService, dispatch}) => {
+const ServiceComponent = ({open, setOpen, createService, editService, dispatch, initial}) => {
 
-    const [name, setName] = useState("");
-    const [duration, setDuration] = useState(0);
+    const _id = initial._id;
+    const [name, setName] = useState(initial.name);
+    const [duration, setDuration] = useState(initial.duration);
   
     function handleClose() {
         setOpen(false);
     }
   
     async function handleSave() {
-        try {
-          const { data } = await createService({
-            variables: {
-              service: {
-                name,
-                duration
-              },
-            },
-          });
-  
-          if (data.createService) {
-              console.log({createService: data});
-            dispatch({
-              type: 'SNACKBAR',
-              show: true,
-              message: 'Informações Inseridas com sucesso!'
-            });
-          } else {
-            dispatch({
-              type: 'SNACKBAR',
-              show: true,
-              message: 'Ops, não foi possivel salvar suas alterações!'
-            });
-          }
-        } catch (e) {
-          console.log('erro', e);
+        if (_id) {
+            console.log('handleSave', {_id});
+            try {
+                const { data } = await editService({
+                  variables: {
+                    id: _id,
+                    service: {
+                      name,
+                      duration
+                    },
+                  },
+                });
+        
+                if (data.editService) {
+                    console.log({editService: data});
+                  dispatch({
+                    type: 'SNACKBAR',
+                    show: true,
+                    message: 'Informações Editadas com sucesso!'
+                  });
+                } else {
+                  dispatch({
+                    type: 'SNACKBAR',
+                    show: true,
+                    message: 'Ops, não foi possivel salvar suas alterações!'
+                  });
+                }
+              } catch (e) {
+                console.log('erro', e);
+              }
+        } else {
+            try {
+                const { data } = await createService({
+                  variables: {
+                    service: {
+                      name,
+                      duration
+                    },
+                  },
+                });
+        
+                if (data.createService) {
+                    console.log({createService: data});
+                  dispatch({
+                    type: 'SNACKBAR',
+                    show: true,
+                    message: 'Informações Inseridas com sucesso!'
+                  });
+                } else {
+                  dispatch({
+                    type: 'SNACKBAR',
+                    show: true,
+                    message: 'Ops, não foi possivel salvar suas alterações!'
+                  });
+                }
+              } catch (e) {
+                console.log('erro', e);
+              }
         }
         setOpen(false);
     }
 
     return (
         <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title">Novo Serviço</DialogTitle>
+            <DialogTitle id="form-dialog-title">{_id ? 'Editar' : 'Novo'} Serviço</DialogTitle>
             <DialogContent>
                 <TextField
                     autoFocus
@@ -211,6 +244,7 @@ const ServiceComponent = ({open, setOpen, createService, dispatch}) => {
 
 const Service = compose(
     createServiceMutation,
+    editServiceMutation,
     connect(state => ({
         showSnackBar: {
             message: state.showSnackBar.message,
@@ -219,6 +253,11 @@ const Service = compose(
   })),
 )(ServiceComponent);
 
+    
+const generateColor = () => {
+    return '#' +  Math.random().toString(16).substr(-6);
+}
+
 const Services = ({classes, servicesData: { services, loading }, removeService}) => {
 
     if (loading) {
@@ -226,14 +265,8 @@ const Services = ({classes, servicesData: { services, loading }, removeService})
     }
 
     const [active, setActive] = useState(-1);
+    const [initial, setInitial] = useState({_id: 0, name: '', duration: 0});
     const [open, setOpen] = useState(false);
-    const [removed, setRemoved] = useState(0);
-    console.log({services});
-
-    
-    const generateColor = () => {
-        return '#' +  Math.random().toString(16).substr(-6);
-    }
 
     const remove = async (id) => {
         console.log('remove', id);
@@ -241,16 +274,29 @@ const Services = ({classes, servicesData: { services, loading }, removeService})
             const { data } = await removeService({ variables: { id } } );
             if (data.removeService) {
                 console.log(data);
-                setRemoved(id);
             }
         } catch(erro) {
             console.log('erro', erro);
         }
     }
 
+    const addService = () => {
+        setInitial({_id: 0, name: '', duration: 0});
+        setOpen(true);
+    }
+
+    const editService = (data) => {
+        setInitial(data);
+        setOpen(true);
+    }
+
     return (
         <Grid container className={classes.box}>
-            <Service open={open} setOpen={setOpen} />
+            {
+                open
+                ? <Service open={open} setOpen={setOpen} initial={initial} />
+                : ''
+            }
             <Grid item xs={12} sm={5} className={classes.appSidebar}>
                 <Grid container className={classes.spacing} alignItems="center">
                     <Grid item xs>
@@ -262,7 +308,7 @@ const Services = ({classes, servicesData: { services, loading }, removeService})
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <IconButton className={classes.iconButton} aria-label="Adicionar" onClick={() => setOpen(true)}>
+                        <IconButton className={classes.iconButton} aria-label="Adicionar" onClick={() => addService()}>
                             <PlusCircleIcon className={classes.add} />
                         </IconButton>
                     </Grid>
@@ -284,7 +330,7 @@ const Services = ({classes, servicesData: { services, loading }, removeService})
                                         primary={el.name}
                                         secondary={
                                             <Fragment>
-                                                {el.name}
+                                                Duração: {el.duration}
                                             </Fragment>
                                         }
                                     />
@@ -299,7 +345,7 @@ const Services = ({classes, servicesData: { services, loading }, removeService})
                                                     aria-label="Editar"
                                                     component="button"
                                                     className={classes.edit} 
-                                                    onClick={() => {}}>
+                                                    onClick={() => editService(el)}>
                                                     <EditIcon size={16} />
                                                 </Link>
                                             </Grid>

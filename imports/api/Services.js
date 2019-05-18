@@ -14,8 +14,8 @@ type Query {
 
 type Mutation {
     createService(service: ServiceInput): ID
-    editService(service: ServiceInput): Boolean
-    removeService(id: String): Boolean
+    editService(id: ID, service: ServiceInput): Boolean
+    removeService(id: ID): Boolean
 }
 
 input ServiceInput {
@@ -36,7 +36,7 @@ export const ServicesResolver = {
         async services() {
             return ServicesCollection.find().fetch();
         },
-        async service(root, args, { id }) {
+        async service(root, { id }) {
             return ServicesCollection.find(id);
         },
     },
@@ -47,8 +47,8 @@ export const ServicesResolver = {
             return ServicesCollection.insert(service);
         },
 
-        async editService(root, { service }, { id }) {
-            return ServicesCollection.update({ _id: id }, { $set: { ...service } });
+        async editService(root, {id, service}) {
+            return ServicesCollection.update({ _id: id }, { $set: service });
         },
         async removeService(root, { id }) {
             // retorna a quantidade removida
@@ -105,8 +105,8 @@ export const createServiceMutation = graphql(
 
 export const editServiceMutation = graphql(
     gql`
-      mutation editService($service: ServiceInput!) {
-        editService(service: $service)
+      mutation editService($id: ID! $service: ServiceInput!) {
+        editService(id: $id, service: $service)
       }
     `,
     {
@@ -118,7 +118,7 @@ export const editServiceMutation = graphql(
 
 export const removeServiceMutation = graphql(
     gql`
-      mutation removeService($id: String!) {
+      mutation removeService($id: ID!) {
         removeService(id: $id)
       }
     `,
