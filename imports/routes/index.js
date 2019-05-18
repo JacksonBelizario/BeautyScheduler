@@ -1,6 +1,7 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { Redirect, Route, Switch } from 'react-router-dom';
+import {Typography} from '@material-ui/core';
 import Sample from '../ui/Sample.jsx';
 import Login from '../ui/Login.jsx';
 import Calendar from '../ui/Scheduler/Calendar.jsx';
@@ -16,13 +17,14 @@ export const RouterPaths = {
   PRODUCTS: '/products',
 };
 
-const PrivateRoute = ({ component: Component, path, ...rest }) => (
+const PrivateRoute = ({ component: Component, path, breadcrumb, ...rest }) => (
   <Route
     {...rest}
     render={({ location, ...props }) =>
-      Meteor.userId() ? (
-        <Component {...props} />
-      ) : (
+      Meteor.userId() ? (<div>
+        {breadcrumb ? <Typography variant="h5" color="primary">{breadcrumb}</Typography> : ''}
+          <Component {...props} />
+        </div>) : (
         <Redirect
           to={{
             pathname: RouterPaths.LOGIN,
@@ -43,8 +45,8 @@ export const Routes = () => (
 
       <PrivateRoute path={RouterPaths.USER_PROFILE} component={UserProfile} />
 
-      <PrivateRoute path={RouterPaths.SERVICES} component={Services} />
+      <PrivateRoute path={RouterPaths.SERVICES} component={Services} breadcrumb="Serviços" />
 
-      <PrivateRoute path={RouterPaths.PRODUCTS} component={Sample} />
+      <PrivateRoute path={RouterPaths.PRODUCTS} component={Sample} breadcrumb="Produtos" />
   </Switch>
 );

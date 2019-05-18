@@ -2,8 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import { makeExecutableSchema } from 'graphql-tools';
 import { getSchema, load } from 'graphql-load';
 import { setup } from 'meteor/swydo:ddp-apollo';
-import { UserTypeDefs, UserResolver } from '../imports/api/Users';
-import { ServicesTypeDefs, ServicesResolver } from '../imports/api/Services';
+import { UserTypeDefs, UserResolver } from '../imports/api/users';
+import { ServicesTypeDefs, ServicesResolver } from '../imports/api/services';
 
 
 load({

@@ -12,7 +12,7 @@ import Popover from '@material-ui/core/Popover';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Error as ErrorIcon, CheckCircle as CheckIcon } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
-import { userQuery, editUser } from '../../api/Users.js';
+import { userQuery, editUser } from '../../api/users';
 import Loading from '../components/Loading'
 import red from '@material-ui/core/colors/red';
 import green from '@material-ui/core/colors/green';

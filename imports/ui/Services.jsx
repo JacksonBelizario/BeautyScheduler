@@ -22,9 +22,8 @@ import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { servicesQuery, removeServiceMutation, createServiceMutation, editServiceMutation } from '../api/Services';
+import { servicesQuery, removeServiceMutation, createServiceMutation, editServiceMutation } from '../api/services';
 
 import {
     PlusCircle as PlusCircleIcon,
@@ -267,6 +266,7 @@ const Services = ({classes, servicesData: { services, loading }, removeService})
     const [active, setActive] = useState(-1);
     const [initial, setInitial] = useState({_id: 0, name: '', duration: 0});
     const [open, setOpen] = useState(false);
+    const [search, setSearch] = useState('');
 
     const remove = async (id) => {
         console.log('remove', id);
@@ -301,7 +301,7 @@ const Services = ({classes, servicesData: { services, loading }, removeService})
                 <Grid container className={classes.spacing} alignItems="center">
                     <Grid item xs>
                         <Paper className={classes.search} elevation={0}>
-                            <InputBase className={classes.input} placeholder="Procurar" />
+                            <InputBase className={classes.input} placeholder="Procurar" value={search} onChange={({target: { value } }) => setSearch(value)} />
                             <IconButton className={classes.iconButton} aria-label="Procurar">
                                 <SearchIcon />
                             </IconButton>
@@ -317,7 +317,9 @@ const Services = ({classes, servicesData: { services, loading }, removeService})
                     <PerfectScrollbar>
                         <List className={classes.list}>
                         {
-                            services.map((el, index) => (
+                            services
+                                .filter(el => search ? el.name.toLowerCase().includes(search.toLowerCase()) : el)
+                                .map((el, index) => (
                                 <ListItem
                                     button
                                     onClick={() => setActive(index)}

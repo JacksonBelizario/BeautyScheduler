@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react';
 import { Avatar, IconButton , Fade, Menu, MenuItem } from '@material-ui/core';
 import { Link } from 'react-router-dom';
-import { userQuery } from '../../api/Users.js';
+import { userQuery } from '../../api/users';
 import { RouterPaths } from '../../routes';
 import {User as UserIcon} from 'react-feather';
 
