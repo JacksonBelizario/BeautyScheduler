@@ -20,12 +20,14 @@ type Mutation {
 
 input ServiceInput {
     name: String
+    amount: Float
     duration: Float
 }
 
 type Service {
     _id: ID
     name: String
+    amount: Float
     duration: Float
 }
 
@@ -66,6 +68,7 @@ const SERVICE_QUERY = gql`
     service(id: $id) {
       _id
       name
+      amount
       duration
     }
   }
@@ -76,6 +79,7 @@ const SERVICES_QUERY = gql`
         services {
             _id
             name
+            amount
             duration
         }
     }

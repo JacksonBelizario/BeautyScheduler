@@ -19,21 +19,6 @@ import {
     Loader as LoaderIcon
 } from 'react-feather';
 
-import faker from 'faker';
-
-faker.locale = "pt_BR";
-
-
-const elements = new Array(20).fill(null).map(id => ({
-    id,
-    name: faker.name.findName(),
-    avatar: faker.image.avatar(),
-    email: faker.internet.email(),
-    phone: faker.phone.phoneNumberFormat(),
-    address: faker.address.streetName(),
-}))
-
-
 const styles = theme => ({
     box: {
         backgroundColor: '#fff',
@@ -127,9 +112,12 @@ const Services = ({classes, servicesData: { services, loading }, removeService})
     }
 
     const [active, setActive] = useState(-1);
-    const [initial, setInitial] = useState({_id: 0, name: '', duration: 0});
+    const [initial, setInitial] = useState({});
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState('');
+
+    const servicos = services
+    .filter(el => search ? el.name.toLowerCase().includes(search.toLowerCase()) : el);
 
     const remove = async (id) => {
         console.log('remove', id);
@@ -144,7 +132,7 @@ const Services = ({classes, servicesData: { services, loading }, removeService})
     }
 
     const addService = () => {
-        setInitial({_id: 0, name: '', duration: 0});
+        setInitial({_id: 0, name: '', amount: 0, duration: 0});
         setOpen(true);
     }
 
@@ -180,8 +168,7 @@ const Services = ({classes, servicesData: { services, loading }, removeService})
                     <PerfectScrollbar>
                         <List className={classes.list}>
                         {
-                            services
-                                .filter(el => search ? el.name.toLowerCase().includes(search.toLowerCase()) : el)
+                            servicos
                                 .map((el, index) => (
                                 <ListItem
                                     button
@@ -239,19 +226,16 @@ const Services = ({classes, servicesData: { services, loading }, removeService})
                         <CardHeader
                             className={classes.cardHeader}
                             avatar={
-                                <Avatar
-                                    className={classes.cardAvatar}
-                                    alt={elements[active].name}
-                                    src={elements[active].avatar} />
+                                <Avatar>{servicos[active].name && servicos[active].name.split(' ').slice(0, 2).map(letters => letters[0]).join('')}</Avatar>
                             }
                             action={
-                            <IconButton className={classes.edit}>
+                            <IconButton className={classes.edit} onClick={() => editService(servicos[active])}>
                                 <EditIcon />
                             </IconButton>
                             }
                             title={
                                 <Typography variant="h5">
-                                    {elements[active].name}
+                                    {servicos[active].name}
                                 </Typography>
                             }
                         />
@@ -263,19 +247,15 @@ const Services = ({classes, servicesData: { services, loading }, removeService})
                                 spacing={16} >
                                 <Grid item container spacing={16}>
                                     <Grid item xs={4} md={3}><b>Nome:</b></Grid>
-                                    <Grid item xs={8} md={9}>{elements[active].name}</Grid>
+                                    <Grid item xs={8} md={9}>{servicos[active].name}</Grid>
                                 </Grid>
                                 <Grid item container spacing={16}>
-                                    <Grid item xs={4} md={3}><b>E-mail:</b></Grid>
-                                    <Grid item xs={8} md={9}>{elements[active].email}</Grid>
+                                    <Grid item xs={4} md={3}><b>Valor:</b></Grid>
+                                    <Grid item xs={8} md={9}>{servicos[active].amount}</Grid>
                                 </Grid>
                                 <Grid item container spacing={16}>
-                                    <Grid item xs={4} md={3}><b>Telefone:</b></Grid>
-                                    <Grid item xs={8} md={9}>{elements[active].phone}</Grid>
-                                </Grid>
-                                <Grid item container spacing={16}>
-                                    <Grid item xs={4} md={3}><b>Endereço:</b></Grid>
-                                    <Grid item xs={8} md={9}>{elements[active].address}</Grid>
+                                    <Grid item xs={4} md={3}><b>Duração:</b></Grid>
+                                    <Grid item xs={8} md={9}>{servicos[active].duration}</Grid>
                                 </Grid>
                             </Grid>
                         </CardContent>

@@ -10,6 +10,7 @@ const ServiceComponent = ({open, setOpen, createService, editService, dispatch, 
 
     const _id = initial._id;
     const [name, setName] = useState(initial.name);
+    const [amount, setAmount] = useState(initial.amount);
     const [duration, setDuration] = useState(initial.duration);
   
     function handleClose() {
@@ -25,6 +26,7 @@ const ServiceComponent = ({open, setOpen, createService, editService, dispatch, 
                     id: _id,
                     service: {
                       name,
+                      amount,
                       duration
                     },
                   },
@@ -92,6 +94,18 @@ const ServiceComponent = ({open, setOpen, createService, editService, dispatch, 
                     type="text"
                     onChange={({ target: { value } }) => {
                         setName(value);
+                    }}
+                    fullWidth
+                />
+                <TextField
+                    autoFocus
+                    name="valor"
+                    margin="dense"
+                    label="Valor"
+                    value={amount}
+                    type="text"
+                    onChange={({ target: { value } }) => {
+                        setAmount(value);
                     }}
                     fullWidth
                 />
