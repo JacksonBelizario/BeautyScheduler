@@ -6,7 +6,7 @@ import Sample from '../ui/Sample.jsx';
 import Login from '../ui/Login.jsx';
 import Calendar from '../ui/Scheduler/Calendar.jsx';
 import UserProfile from '../ui/User/Profile.jsx';
-import Services from '../ui/Services.jsx';
+import Services from '../ui/Service/Services.jsx';
 
 export const RouterPaths = {
   ROOT: '/',

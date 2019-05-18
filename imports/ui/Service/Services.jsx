@@ -1,29 +1,16 @@
 import React, { Fragment, useState } from 'react';
-import { Grid, Paper, IconButton, InputBase, Link } from '@material-ui/core';
+import { compose } from 'recompose';
+import {
+    Grid, Paper, IconButton, InputBase, Link, Card, CardHeader, CardContent,
+    List, ListItem, ListItemText, ListItemAvatar, ListItemSecondaryAction,
+    Avatar, Typography
+} from '@material-ui/core';
 import { Search as SearchIcon } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
-import Typography from '@material-ui/core/Typography';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
 import PerfectScrollbar from 'react-perfect-scrollbar'
-import Loading from './components/Loading';
-
-import { compose } from 'recompose';
-import { connect } from 'react-redux';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import { servicesQuery, removeServiceMutation, createServiceMutation, editServiceMutation } from '../api/services';
+import Loading from '../components/Loading';
+import { servicesQuery, removeServiceMutation } from '../../api/services';
+import { Service } from './Service.jsx';
 
 import {
     PlusCircle as PlusCircleIcon,
@@ -127,130 +114,6 @@ const styles = theme => ({
         height: 100,
     },
 });
-
-const ServiceComponent = ({open, setOpen, createService, editService, dispatch, initial}) => {
-
-    const _id = initial._id;
-    const [name, setName] = useState(initial.name);
-    const [duration, setDuration] = useState(initial.duration);
-  
-    function handleClose() {
-        setOpen(false);
-    }
-  
-    async function handleSave() {
-        if (_id) {
-            console.log('handleSave', {_id});
-            try {
-                const { data } = await editService({
-                  variables: {
-                    id: _id,
-                    service: {
-                      name,
-                      duration
-                    },
-                  },
-                });
-        
-                if (data.editService) {
-                    console.log({editService: data});
-                  dispatch({
-                    type: 'SNACKBAR',
-                    show: true,
-                    message: 'Informações Editadas com sucesso!'
-                  });
-                } else {
-                  dispatch({
-                    type: 'SNACKBAR',
-                    show: true,
-                    message: 'Ops, não foi possivel salvar suas alterações!'
-                  });
-                }
-              } catch (e) {
-                console.log('erro', e);
-              }
-        } else {
-            try {
-                const { data } = await createService({
-                  variables: {
-                    service: {
-                      name,
-                      duration
-                    },
-                  },
-                });
-        
-                if (data.createService) {
-                    console.log({createService: data});
-                  dispatch({
-                    type: 'SNACKBAR',
-                    show: true,
-                    message: 'Informações Inseridas com sucesso!'
-                  });
-                } else {
-                  dispatch({
-                    type: 'SNACKBAR',
-                    show: true,
-                    message: 'Ops, não foi possivel salvar suas alterações!'
-                  });
-                }
-              } catch (e) {
-                console.log('erro', e);
-              }
-        }
-        setOpen(false);
-    }
-
-    return (
-        <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title">{_id ? 'Editar' : 'Novo'} Serviço</DialogTitle>
-            <DialogContent>
-                <TextField
-                    autoFocus
-                    name="nome"
-                    margin="dense"
-                    label="Nome"
-                    value={name}
-                    type="text"
-                    onChange={({ target: { value } }) => {
-                        setName(value);
-                    }}
-                    fullWidth
-                />
-                <TextField
-                    autoFocus
-                    name="duration"
-                    margin="dense"
-                    label="Duração"
-                    value={duration}
-                    type="number"
-                    onChange={({ target: { value } }) => {
-                        setDuration(value);
-                    }}
-                    fullWidth
-                />
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={handleClose} color="secondary">
-                    Cancelar
-                </Button>
-                <Button onClick={handleSave} color="primary">
-                    Salvar
-                </Button>
-            </DialogActions>
-        </Dialog>)
-}
-
-const Service = compose(
-    createServiceMutation,
-    editServiceMutation,
-    connect(state => ({
-        showSnackBar: {
-            message: state.showSnackBar.message,
-            show: state.showSnackBar.show,
-        }
-  })),
-)(ServiceComponent);
 
     
 const generateColor = () => {
