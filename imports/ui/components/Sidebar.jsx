@@ -62,7 +62,7 @@ const menu = [
         list: [
             {
                 title: 'Funcionários',
-                to: RouterPaths.SERVICES,
+                to: RouterPaths.EMPLOYEES,
             },
             {
                 title: 'Produtos',

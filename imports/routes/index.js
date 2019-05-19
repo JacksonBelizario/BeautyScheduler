@@ -7,6 +7,7 @@ import Login from '../ui/Login.jsx';
 import Calendar from '../ui/Scheduler/Calendar.jsx';
 import UserProfile from '../ui/User/Profile.jsx';
 import Services from '../ui/Service/Services.jsx';
+import Employees from '../ui/Employee/Employees.jsx';
 
 export const RouterPaths = {
   ROOT: '/',
@@ -15,6 +16,7 @@ export const RouterPaths = {
   USER_PROFILE: '/profile',
   SERVICES: '/services',
   PRODUCTS: '/products',
+  EMPLOYEES: '/employees',
 };
 
 const PrivateRoute = ({ component: Component, path, breadcrumb, ...rest }) => (
@@ -44,6 +46,8 @@ export const Routes = () => (
       <PrivateRoute exact path={RouterPaths.ROOT} component={Calendar} />
 
       <PrivateRoute path={RouterPaths.USER_PROFILE} component={UserProfile} />
+
+      <PrivateRoute path={RouterPaths.EMPLOYEES} component={Employees} breadcrumb="Funcionários" />
 
       <PrivateRoute path={RouterPaths.SERVICES} component={Services} breadcrumb="Serviços" />
 

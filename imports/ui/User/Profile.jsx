@@ -70,14 +70,6 @@ const Profile = ({ classes, userData: { user, loading }, editUser, dispatch }) =
 
   const [email, setEmail] = useState(emailUser.address);
 
-  const datePt = date => {
-    if (!date) return '';
-
-    const [y, m, d] = date.split('-');
-
-    return `${d}/${m}/${y}`
-  }
-
   const [values, setValues] = useState({
     nome: {
       required: true,
