@@ -96,31 +96,31 @@ const Profile = ({ classes, userData: { user, loading }, editUser, dispatch }) =
     cep: {
       required: true,
       label: 'CEP',
-      value: address.zipcode || ''
+      value: (address && address.zipcode) || ''
     },
     logradouro: {
       label: 'Endereço',
-      value: address.street || ''
+      value: (address && address.street) || ''
     },
     numero: {
       label: 'Número',
-      value: address.number || ''
+      value: (address && address.number) || ''
     },
     complemento: {
       label: 'Complemento',
-      value: address.complement || ''
+      value: (address && address.complement) || ''
     },
     bairro: {
       label: 'Bairro',
-      value: address.neighborhood || ''
+      value: (address && address.neighborhood) || ''
     },
     localidade: {
       label: 'Cidade',
-      value: address.city || ''
+      value: (address && address.city) || ''
     },
     uf: {
       label: 'Estado',
-      value: address.state || ''
+      value: (address && address.state) || ''
     },
   });
 
