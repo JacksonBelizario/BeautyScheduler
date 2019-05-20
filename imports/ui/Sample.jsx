@@ -47,7 +47,7 @@ const Sample = ({classes}) => {
       >
         <div className={classes.title}>
           <Typography variant="h5" id="tableTitle">
-            Users
+            Table
           </Typography>
         </div>
         <div className={classes.spacer} />

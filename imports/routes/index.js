@@ -8,6 +8,7 @@ import Calendar from '../ui/Scheduler/Calendar.jsx';
 import UserProfile from '../ui/User/Profile.jsx';
 import Services from '../ui/Service/Services.jsx';
 import Employees from '../ui/Employee/Employees.jsx';
+import Customers from '../ui/Customer/Customers.jsx';
 
 export const RouterPaths = {
   ROOT: '/',
@@ -17,6 +18,7 @@ export const RouterPaths = {
   SERVICES: '/services',
   PRODUCTS: '/products',
   EMPLOYEES: '/employees',
+  CUSTOMERS: '/customers',
 };
 
 const PrivateRoute = ({ component: Component, path, breadcrumb, ...rest }) => (
@@ -48,6 +50,8 @@ export const Routes = () => (
       <PrivateRoute path={RouterPaths.USER_PROFILE} component={UserProfile} />
 
       <PrivateRoute path={RouterPaths.EMPLOYEES} component={Employees} breadcrumb="Funcionários" />
+
+      <PrivateRoute path={RouterPaths.CUSTOMERS} component={Customers} breadcrumb="Clientes" />
 
       <PrivateRoute path={RouterPaths.SERVICES} component={Services} breadcrumb="Serviços" />
 

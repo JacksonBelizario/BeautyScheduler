@@ -64,8 +64,8 @@ export const EmployeeResolver = {
         Roles.addUsersToRoles(employeeId, usersRoles.EMPLOYEE, Roles.GLOBAL_GROUP);
         return employeeId;
     },
-    async editEmployee(root, {id, employee}) {
-        return UsersCollection.update({ _id: id }, { $set: { ...employee } });
+    async editEmployee(root, {id, employee: { profile }}) {
+        return UsersCollection.update({ _id: id }, { $set: { profile } });
     },
     async removeEmployee(root, { id }) {
         // retorna a quantidade removida

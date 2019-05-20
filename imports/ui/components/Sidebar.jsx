@@ -65,12 +65,16 @@ const menu = [
                 to: RouterPaths.EMPLOYEES,
             },
             {
-                title: 'Produtos',
-                to: RouterPaths.PRODUCTS,
+                title: 'Clientes',
+                to: RouterPaths.CUSTOMERS,
             },
             {
                 title: 'Serviços',
                 to: RouterPaths.SERVICES,
+            },
+            {
+                title: 'Produtos',
+                to: RouterPaths.PRODUCTS,
             },
         ]
     },
