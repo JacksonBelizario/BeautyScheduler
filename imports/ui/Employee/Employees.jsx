@@ -9,7 +9,7 @@ import { Search as SearchIcon } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import Loading from '../components/Loading';
-import { employeesQuery, removeEmployeeMutation } from '../../api/users';
+import { employeesQuery, removeEmployeeMutation } from '../../api/employees';
 import { Employee } from './Employee.jsx';
 
 import {
@@ -100,18 +100,10 @@ const styles = theme => ({
     },
 });
 
-    
-const generateColor = () => {
-    return '#' +  Math.random().toString(16).substr(-6);
-}
+const Employees = ({classes, employeesData: { employees, loading }, removeEmployee}) => {
 
-const Employees = ({classes, employeesData, removeEmployee}) => {
-
-    console.log({employeesData});
-
-    const { employees, loading } = employeesData;
-
-    if (loading) {
+    console.log({employees});
+    if (loading || !employees) {
       return <Loading />;
     }
 
@@ -121,7 +113,7 @@ const Employees = ({classes, employeesData, removeEmployee}) => {
     const [search, setSearch] = useState('');
 
     const funcionarios = employees
-    .filter(el => search ? el.name.toLowerCase().includes(search.toLowerCase()) : el);
+    .filter(el => search ? el.profile.name.toLowerCase().includes(search.toLowerCase()) : el);
 
     const remove = async (id) => {
         console.log('remove', id);
@@ -180,13 +172,13 @@ const Employees = ({classes, employeesData, removeEmployee}) => {
                                     alignItems="flex-start"
                                     key={index}>
                                     <ListItemAvatar>
-                                        <Avatar style={{backgroundColor: generateColor()}} >{el.name && el.name.split(' ').slice(0, 2).map(letters => letters[0]).join('')}</Avatar>
+                                        <Avatar style={{backgroundColor: '#bb002f'}} >{el.profile.name && el.profile.name.split(' ').slice(0, 2).map(letters => letters[0]).join('')}</Avatar>
                                     </ListItemAvatar>
                                     <ListItemText
                                         primary={el.profile.name}
                                         secondary={
                                             <Fragment>
-                                                Telefone: {el.profile.phoneNumber}
+                                                Email: {el.emails && el.emails[0].address}
                                             </Fragment>
                                         }
                                     />
@@ -254,6 +246,10 @@ const Employees = ({classes, employeesData, removeEmployee}) => {
                                     <Grid item xs={8} md={9}>{funcionarios[active].profile.name}</Grid>
                                 </Grid>
                                 <Grid item container spacing={16}>
+                                    <Grid item xs={4} md={3}><b>Email:</b></Grid>
+                                    <Grid item xs={8} md={9}>{funcionarios[active].emails[0].address}</Grid>
+                                </Grid>
+                                <Grid item container spacing={16}>
                                     <Grid item xs={4} md={3}><b>Telefone:</b></Grid>
                                     <Grid item xs={8} md={9}>{funcionarios[active].profile.phoneNumber}</Grid>
                                 </Grid>
@@ -277,7 +273,7 @@ const Employees = ({classes, employeesData, removeEmployee}) => {
                         </Grid>
                         <Grid item>
                             <Typography variant="h5">
-                                Selecione um contato para visualizar mais detalhes
+                                Selecione um funcionário para visualizar mais detalhes
                             </Typography>
                         </Grid>
                     </Grid>

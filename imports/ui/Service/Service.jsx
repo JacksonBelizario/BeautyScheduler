@@ -33,7 +33,6 @@ const ServiceComponent = ({open, setOpen, createService, editService, dispatch, 
                 });
         
                 if (data.editService) {
-                    console.log({editService: data});
                   dispatch({
                     type: 'SNACKBAR',
                     show: true,
@@ -61,7 +60,6 @@ const ServiceComponent = ({open, setOpen, createService, editService, dispatch, 
                 });
         
                 if (data.createService) {
-                    console.log({createService: data});
                   dispatch({
                     type: 'SNACKBAR',
                     show: true,

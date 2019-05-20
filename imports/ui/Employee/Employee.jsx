@@ -8,7 +8,7 @@ import CpfInput from '../User/components/CpfInput';
 import DateInput from '../User/components/DateInput';
 import moment from 'moment';
 import { validator } from '../../utils/validators';
-import { createEmployeeMutation } from '../../api/users';
+import { createEmployeeMutation, editEmployeeMutation } from '../../api/employees';
 
 const genders = [
   {
@@ -25,7 +25,7 @@ const genders = [
   },
 ];
 
-const EmployeeComponent = ({open, setOpen, dispatch, initial, createEmployee}) => {
+const EmployeeComponent = ({open, setOpen, dispatch, initial, createEmployee, editEmployee}) => {
 
     const { _id, profile, emails, address } = initial;
 
@@ -117,6 +117,38 @@ const EmployeeComponent = ({open, setOpen, dispatch, initial, createEmployee}) =
             } = formData();
 
             if (_id) {
+                try {
+                    const { data } = await editEmployee({
+                      variables: {
+                        id: _id,
+                        employee: {
+                            email,
+                            password: senha,
+                            profile: {
+                                name: nome
+                            },
+                        },
+                      },
+                    });
+            
+                    if (data.editEmployee) {
+                        console.log({editEmployee: data});
+                        dispatch({
+                            type: 'SNACKBAR',
+                            show: true,
+                            message: 'Informações editadas com sucesso!'
+                        });
+                        setOpen(false);
+                    } else {
+                      dispatch({
+                        type: 'SNACKBAR',
+                        show: true,
+                        message: 'Ops, não foi possivel salvar suas alterações!'
+                      });
+                    }
+                } catch (e) {
+                    console.log('erro', e);
+                }
             } else {
                 try {
                     const { data } = await createEmployee({
@@ -130,7 +162,6 @@ const EmployeeComponent = ({open, setOpen, dispatch, initial, createEmployee}) =
                     });
             
                     if (data.createEmployee) {
-                        console.log({createEmployee: data});
                         dispatch({
                             type: 'SNACKBAR',
                             show: true,
@@ -182,19 +213,17 @@ const EmployeeComponent = ({open, setOpen, dispatch, initial, createEmployee}) =
                         disabled={!!_id}
                     />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
-                        {
-                            (!_id) ?
-                            <TextField
-                                {...values.senha}
-                                fullWidth
-                                onChange={({ target: { value } }) => {
-                                    onFormChange('senha')(value);
-                                }}
-                                disabled={!!_id}
-                            /> : ''
-                        }
-                    </Grid>
+                    {
+                        (!_id) ?
+                        <Grid item xs={12} sm={6}><TextField
+                            {...values.senha}
+                            fullWidth
+                            onChange={({ target: { value } }) => {
+                                onFormChange('senha')(value);
+                            }}
+                            disabled={!!_id}
+                        /></Grid> : ''
+                    }
                     <Grid item xs={12} sm={6}>
                     <TextField
                         {...values.celular}
@@ -259,6 +288,7 @@ const EmployeeComponent = ({open, setOpen, dispatch, initial, createEmployee}) =
 
 export const Employee = compose(
     createEmployeeMutation,
+    editEmployeeMutation,
     connect(state => ({
         showSnackBar: {
             message: state.showSnackBar.message,

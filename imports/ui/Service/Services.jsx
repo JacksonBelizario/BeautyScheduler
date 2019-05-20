@@ -100,10 +100,6 @@ const styles = theme => ({
     },
 });
 
-    
-const generateColor = () => {
-    return '#' +  Math.random().toString(16).substr(-6);
-}
 
 const Services = ({classes, servicesData: { services, loading }, removeService}) => {
 
@@ -176,7 +172,7 @@ const Services = ({classes, servicesData: { services, loading }, removeService})
                                     alignItems="flex-start"
                                     key={index}>
                                     <ListItemAvatar>
-                                        <Avatar style={{backgroundColor: generateColor()}} >{el.name && el.name.split(' ').slice(0, 2).map(letters => letters[0]).join('')}</Avatar>
+                                        <Avatar style={{backgroundColor: '#7200ca'}} >{el.name && el.name.split(' ').slice(0, 2).map(letters => letters[0]).join('')}</Avatar>
                                     </ListItemAvatar>
                                     <ListItemText
                                         primary={el.name}
@@ -273,7 +269,7 @@ const Services = ({classes, servicesData: { services, loading }, removeService})
                         </Grid>
                         <Grid item>
                             <Typography variant="h5">
-                                Selecione um contato para visualizar mais detalhes
+                                Selecione um serviço para visualizar mais detalhes
                             </Typography>
                         </Grid>
                     </Grid>
